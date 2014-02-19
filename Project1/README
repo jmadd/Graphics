@@ -1,0 +1,45 @@
+
+Partner1
+-----------
+Name: Nick Crum
+EID: 
+
+Partner2
+-----------
+Name: Jared Maddox
+EID: jam7732
+
+
+Slip days used: None
+
+
+Include any special compile instructions here
+--------------------------------------------------------------
+
+
+
+Put the results of the Performance Test here.  
+--------------------------------------------------------------
+Mode     |  Time
+--------------------
+1 (Wire) |  .55s
+1 (Solid)|  .56s
+2        |  .56s
+3        |  .56s
+4 (Wire) |  .55s
+4 (Solid)|  .56s
+5        |  .56s
+6        |  .55s
+7        |  .56s
+ 
+ 
+Mention any interesting items you added which deserves extra credit
+------------------------------------------------------------------------------------------------
+
+
+
+In case your code does not compile or is incomplete, describe the parts you implemented to get partial credits
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
