@@ -1,41 +1,46 @@
 
 Partner1
 -----------
-Name: Nick Crum
-EID: 
+Name:	Nick Crum
+EID:	nrc523
 
 Partner2
 -----------
-Name: Jared Maddox
-EID: jam7732
+Name:	Jared Maddox
+EID:	jam7732
 
 
-Slip days used: None
-
+Slip days used:
+0
 
 Include any special compile instructions here
 --------------------------------------------------------------
-
+Compile: make canvas
+Run:     canvas
 
 
 Put the results of the Performance Test here.  
 --------------------------------------------------------------
-Mode     |  Time
---------------------
-1 (Wire) |  .55s
-1 (Solid)|  .56s
-2        |  .56s
-3        |  .56s
-4 (Wire) |  .55s
-4 (Solid)|  .56s
-5        |  .56s
-6        |  .55s
-7        |  .56s
- 
- 
+| Scene | Avg Time (sec) |
+--------|----------------|
+| 1(w)  |  18.01         |
+| 1(s)  |  18.03         |
+|  2    |  18.01         |
+|  3    |  18.01         |
+| 4(w)  |  18.01         |
+| 4(s)  |  18.03         |
+|  5    |  18.01         |
+|  6    |  18.01         |
+|  7    |  18.01         |
+
+Which Display Mode(s) for the cone ran fastest and which ran slowest, or did they all run at about the same speed?  Based on what you have learned, write a one or two sentence explanation for the observed running times.
+
+All of our display modes ran at almost exactly the same speed, though solid glut objects seemed to take just slightly longer. This is likely because they all use vertex arrays and indices, and the differences in singular objects being rendered is very minor. Most of the calculation likely comes from converting the arrays to a displayable object, which is required for all 3D objects generated. 
+
 Mention any interesting items you added which deserves extra credit
 ------------------------------------------------------------------------------------------------
-
+We generated icosahedrons in the free-scene which can be have triangles recursively added to (and removed from) it when the user presses the 'r' key.
+This works to eventually create an object that looks like a sphere. This is a complex dynamically generated object. We added simple animations to the scene through rotations of the shapes and scaling in and out.
 
 
 In case your code does not compile or is incomplete, describe the parts you implemented to get partial credits

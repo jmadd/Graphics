@@ -24,6 +24,7 @@
 #define MAX_RECURSION 3
 
 #include <vector>
+#include <math.h>
 
 using namespace std;
 /* The current display mode */
@@ -37,13 +38,9 @@ extern int disp_mode;
 /* The current display style */
 extern int disp_style;
 extern int recursion_level;
-extern GLuint* ico_indices;
-extern GLuint* ico_indices_tmp;
-extern GLfloat* ico_verts;
 extern int curr_rec; //selected_recursion_level
 extern int vr_object;
 
-extern GLfloat w,wx,wy,wz;
 
 class Vector3f{
 public:

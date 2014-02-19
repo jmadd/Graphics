@@ -18,6 +18,9 @@
 
 #include <math.h>//math
 
+#include <fstream>
+#include <iostream>
+
 /* Function Declarations */
 void myInit (int argc, char **argv);
 
@@ -92,6 +95,7 @@ void myInit (int argc, char **argv) {
 	disp_style = DS_SOLID;
 	vr_object = VR_CUBE;
 	recursion_level = 0;
+	srand(0);
 
 	init_shapes();
 
@@ -101,45 +105,18 @@ void myInit (int argc, char **argv) {
 	resetCamera();
 }
 
-float angle = 0.0f;
-float rx = 0;
-float ry = 0;
-float rz = 0;
 /*
  * The main drawing routine.  Based on the current display mode, other
  * helper functions may be called.
  */
 void myDisplay (void) {
-	//float dif,difx,dify,difz;
 	glEnable(GL_DEPTH_TEST);	/* Use the Z - buffer for visibility */
 	glMatrixMode(GL_MODELVIEW);	/* All matrix operations are for the model */
 
 	/* Clear the pixels (aka colors) and the z-buffer */
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	/*srand(0);
-	glRotatef(angle,rx,ry,rz);
 	
-	dif = (rand()%100-50)/100.0f;
-	difx = (rand()%100-50)/100.0f;
-	dify = (rand()%100-50)/100.0f;
-	difz = (rand()%100-50)/100.0f;
 	
-	angle+=dif;
-	angle = (angle < 1.0f) ? angle : angle-dif;
-	angle = (angle > -1.0f) ? angle : angle-dif;
-	rx+=difx;
-	rx = (rx < 1.0f) ? rx : rx-difx;
-	rx = (rx > -1.0f) ? rx : rx-difx;
-	ry+=dify;
-	ry = (ry < 1.0f) ? ry : ry-dify;
-	ry = (ry > -1.0f) ? ry : ry-dify;
-	rz+=difz;
-	rz = (rz < 1.0f) ? rz : rz-difz;
-	rz = (rz > -1.0f) ? rz : rz-difz*/
-	srand(0);
-	wy += (rand()%20-10)/10.0f;
-	wz += (rand()%20-10)/5.0f;
-	w += (rand()%40-20)/10.0f;
 	
 	switch (disp_mode) {
 		case DM_CUBE_GLUT:
@@ -448,8 +425,23 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 			}else
 				printf("Number of triangles has remained the same\n");
 			break;
+			//VRML cube, dodecahedron, icosahedron, pyramid
 		case 'v':
 			vr_object++;
+			switch (vr_object % 4) {
+				case 0:
+					printf("Displaying VRML Cube\n");
+				break;
+				case 1:
+					printf("Displaying VRML Dodecahedron\n");
+				break;
+				case 2:
+					printf("Displaying VRML Icosahedron\n");
+				break;
+				case 3:
+					printf("Displaying VRML Pyramid\n");
+				break;
+			}
 			break;
 		case 'r':
 			curr_rec++;
@@ -510,5 +502,8 @@ int main(int argc, char **argv)
 	/* Control flow will never reach here */
 	return 0;
 }
+
+
+
 
 /* end of canvas.c */

@@ -10,15 +10,16 @@
  * Group Members: <FILL IN>
  */
 
-#include "common.h"
+
+
 
 #include <stdio.h>
 
+
+#include "common.h"
 #include "drawing.h"
 #include "vrml.h"
 #include <math.h> //addition
-
-
 
 #define PI 3.14159265 //addition
 
@@ -329,7 +330,7 @@ void draw_cone_tri(void) {
 	num_indices = sizeof(cone_indices) / sizeof(GLuint);
 
 	/*
-	 * Loop over all triangles that need to be drawn.
+	 * Loop over all triangles that need to be draen.
 	 * Step i by 3 because there are 3 vertices per triangles.
 	 */
 	for (i = 0; i < num_indices; i += 3) {
@@ -488,61 +489,41 @@ void draw_vrml(void) {
 	}
 }
 
-GLfloat w,wx,wy,wz;
+
+GLfloat th=0,th2=0,th3=0;
+GLfloat pulse=1,mod=0.1f;
 /* Draws a freeform scene */
 void draw_free_scene(void) {
 	/* ADD YOUR CODE HERE */
 	/* NOTE: Modify or remove the existing code in this func, as necessary */
 	
 	
-	
+
+
 	glPushMatrix();
-	glColor3f(0,0,1.0f);
-	glScalef(3,3,3);
-	glRotatef(w,wx,wy,wz);
+	glColor3f((1-pulse),0,pulse);
+	glRotatef(th+=0.2f,0,1,1);
+	glScalef(3*pulse,3*pulse,3*pulse);
 	draw_sphere(curr_rec);
 	glPopMatrix();
 	
 	glPushMatrix();
-	glColor3f(1.0f,1.0f,0);
-	glScalef(1.5f,1.5f,1.5f);
-	glRotatef(w,wx,wy,wz);
+	glColor3f((1-pulse),pulse,pulse);
+	glRotatef(th2-=0.4f,-1,-.5,0);
+	glScalef(1.5f*pulse,1.5f*pulse,1.5f*pulse);
 	draw_sphere(curr_rec);
 	glPopMatrix();
 
 	glPushMatrix();
-	glColor3f(1.0f,0,0);
-	glRotatef(w,wx,wy,wz);
+	glColor3f(pulse,(1-pulse),(1-pulse));
+	glRotatef(th3+=1.0f,.25f,-.5,1.5f);
+	glScalef(pulse,pulse,pulse);
 	draw_sphere(curr_rec);
 	glPopMatrix();
 
-	/*int i, j;
-	float theta = 0;
-	float phi = 0;
-	glColor3f(1.0f, 0.0f, 0.0f);		
-	glutWireTorus(0.1, 0.4, 10, 20);
-
-	glPushMatrix();
-	glRotatef(90.0f,0.0f,1.0f,0.0f);
-	glColor3f(1,0,0);
-	glutWireTorus(0.1,0.4,10,20);
-	glPopMatrix();
-
-	srand(0);
-	for(j = 0; j < 8; j++,phi+=PI/4){
-		for(i = 0; i < 8; i++,theta+=PI/8){
-			glPushMatrix();
-			glRotatef(phi*180/PI,1.0f,0,0);
-			glTranslatef(2.0f*cos(theta),2.0f*sin(theta),0);
-			glColor3f(0,0.5f,(rand()%1000)/1000.0f);
-			glRotatef(theta*180/PI-90,0,0,1);
-			glScalef(0.25f,0.25f,0.25f);
-			if(theta != 0 && theta != PI && theta != 2*PI)draw_vrml_pyramid();
-
-			glPopMatrix();
-		}
-		theta=0;
-	}*/
+	pulse+=mod;
+	if(pulse > 1) mod = -0.005f;
+	if(pulse < 0.05f) mod = 0.005f;
 	
 }
 
@@ -570,6 +551,13 @@ void draw_sphere(int rec){
 				Vector3f a;
 				Vector3f b;
 				Vector3f c;
+
+				/*
+				ico_indicesq = {
+				Vector3ui (i1,i2,i3) Triangle 1,
+				Vector3ui (i4,i5,i6) Triangle 2,
+				Vector3ui (i7,i8,i9) Triangle 3 }
+				*/
 			
 
 				a = getMidPoint((ico_vertsq[indexv._x]),(ico_vertsq[indexv._y]));
@@ -579,6 +567,7 @@ void draw_sphere(int rec){
 				ico_vertsq.push_back(a);
 				ico_vertsq.push_back(b);
 				ico_vertsq.push_back(c);
+
 
 				ico_indicesq_tmp.push_back(Vector3ui(indexv._x,t,t+2));
 
@@ -597,8 +586,7 @@ void draw_sphere(int rec){
 			}
 		}
 	}
-
-	srand(0);
+	
 	for (Vector3ui v: ico_indicesq) {
 		
 		
@@ -618,8 +606,10 @@ void draw_sphere(int rec){
 }
 
 Vector3f getMidPoint(Vector3f v1, Vector3f v2){
-	Vector3f v((v1._x+v2._x)/2.0f,(v1._y+v2._y)/2.0f,(v1._z+v2._z)/2.0f);
-	v.scale(1.0f/v.length());
+	Vector3f v((v1._x+v2._x)/2.0f,
+			   (v1._y+v2._y)/2.0f,
+			   (v1._z+v2._z)/2.0f);
+	v.normalize();
 	return v;
 }
 
