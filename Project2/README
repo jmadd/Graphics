@@ -1,26 +1,12 @@
-Partner1
------------
-Name: Nick Crum
-EID: 
-
-Partner2
------------
-Name: Jared Maddox
-EID: jam7732
-
-
-Slip days used: None
-
-
-Include any special compile instructions here
---------------------------------------------------------------
-
-
-Mention any interesting items you added which deserves extra credit
-------------------------------------------------------------------------------------------------
-
-
-
-In case your code does not compile or is incomplete, describe the parts you implemented to get partial credits
----------------------------------------------------------------------------------------------------------------------------------------------------------
+/*
+ * README
+ * ------
+ * Put your L-System descripton and answers to the two group questions
+ * here.  Also, include the names of your team members and any special
+ * instructions for compiling, etc., if you used something besides the
+ * standard Makefile.
+ *
+ * Group Members: <FILL IN>
+ * Email Addresses:
+ */
 
