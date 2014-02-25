@@ -13,6 +13,12 @@ GLfloat* vecByMat(GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3,
 		GLfloat m30, GLfloat m31, GLfloat m32, GLfloat m33);
 GLfloat* vecByMat(GLfloat* v, GLfloat* m);
 
+void pushState(GLfloat*);
+GLfloat* popState(void);
+void drawLeaf(int);
+void drawBranch(int);
+void drawTree(int);
+
 
 GLfloat* matByMat(GLfloat* m, GLfloat* n);
 

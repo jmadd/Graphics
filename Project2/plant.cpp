@@ -57,35 +57,10 @@ void display() {
 
 
 	/* See drawplant.c for the definition of this routine */
-  GLfloat tx = 10, ty = 1, tz = 0;
-  GLfloat A[16] = {1,0,0,tx,
-                0,1,0,ty,
-                0,0,1,tz,
-                0,0,0,1};
-  GLfloat R[16] = {0,-1,0,0,
-                1,0,0,0,
-                0,0,1,0,
-                0,0,0,1};
-  GLfloat I[16] = {1,0,0,0,
-                0,1,0,0,
-                0,0,1,0,
-                0,0,0,1};
-
-  GLfloat* result = matByMat(A,R);
   
-  load3DMatrix(result);
 
-	drawLeaf();
+  drawPlant();
 
-  load3DMatrix(I);
-
-  A[3]=-10;
-
-  load3DMatrix(A);
-
-  drawLeaf();
-
-  load3DMatrix(I);
 
 
     glFlush();  /* Flush all executed OpenGL ops finish */

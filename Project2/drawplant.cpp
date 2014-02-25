@@ -21,6 +21,8 @@
 #include "drawplant.h"
 #include "readppm.h"
 
+#define PI 3.14159
+
 using namespace std;
 
 /* Takes a 2D matrix in row-major order, and loads the 3D matrix which
@@ -110,6 +112,22 @@ GLfloat* matByMat(GLfloat* A, GLfloat* B){
 	return result;
 }
 
+GLfloat* rotateXY(GLfloat angle){ //takes degrees
+	GLfloat* out = new GLfloat[16]{cos(PI*angle/180), -sin(PI*angle/180), 0, 0,
+				   sin(PI*angle/180), cos(PI*angle/180), 0, 0,
+				   0, 0, 1, 0,
+				   0, 0, 0, 1};
+    return out;
+}
+
+GLfloat* translate(GLfloat x, GLfloat y=0,GLfloat z=0){ //takes degrees
+	GLfloat* out = new GLfloat[16]{1, 0, 0, x,
+				  0, 1, 0, y,
+				  0, 0, 1, z,
+				  0, 0, 0, 1};
+	return out;
+}
+
 
 void printMatrix(GLfloat* m){
 	for(int i = 0; i < 4; i++){
@@ -153,6 +171,46 @@ void drawBranch(void) {
 	glEnd();
 }
 
+GLfloat* turnright = rotateXY(-90);
+GLfloat* turnleft = rotateXY(90);
+GLfloat* grow = translate(6);
+GLfloat* state = translate(0);
+GLfloat* moved = translate(0);
+
+void pushState(GLfloat* st){
+	state = matByMat(st,translate(0));
+}
+
+GLfloat* popState(){
+	return state;
+}
+
+
+void drawLeaf(int i){
+	cout << "i = " << i << endl;
+	if(i==0) {load3DMatrix(moved); drawLeaf();}
+	else{
+		cout << "i>0" << endl;
+		drawBranch(i-1); pushState(moved); moved=matByMat(turnleft,moved); drawLeaf(i-1); 
+		// moved = popState();
+		// pushState(moved); moved = matByMat(turnright,moved); drawLeaf(i-1); moved = popState();
+	}
+}
+
+void drawBranch(int i) {
+	GLfloat* temp = translate(0);
+	temp = matByMat(state,temp);
+	if(i==0){ drawBranch();}
+	else {
+		temp = matByMat(grow, temp); load3DMatrix(temp); drawBranch(i-1);
+	}
+}
+
+void drawTree(int i) {
+	//initialize?
+	drawLeaf(i);
+}
+
 /*
  * Draws the plant.
  *
@@ -163,18 +221,36 @@ void drawPlant(void) {
 
 	/* Load a hard-coded rotation matrix of -30 degrees about positive z */
 	/* This matrix is only here as an example, and can be removed */
-	load2DMatrix(
-	       sqrt(3.0)/2.0, -1.0/2.0,      0.0,
-		   1.0/2.0,       sqrt(3.0)/2.0, 0.0,
-		   0.0,           0.0,           1.0);
+	// load2DMatrix(
+	//        sqrt(3.0)/2.0, -1.0/2.0,      0.0,
+	// 	   1.0/2.0,       sqrt(3.0)/2.0, 0.0,
+	// 	   0.0,           0.0,           1.0);
 
 	/*
 	 * The location of the leaf and branch will not look right until
 	 * transformation matrices are implmented.
 	 */
-	drawLeaf();
 
-	drawBranch();
+// 	drawleaf(i){
+// if(i==0){ actual-draw-leaf() }
+// else {
+// drawbranch(i-1); pushState() ; turn left (); drawleaf (i-1); popState();
+// pushState(); turn right (); drawleaf(i-1); popState() }
+// }
+// drawbranch(i){
+// if(i==0){ actual-draw-branch() }
+// else { grow(); drawbranch(i-1)}
+// }
+// drawtree(i){
+// initialize(); drawleaf(i) }
+// }
+
+	 drawLeaf(0);
+
 }
+
+
+
+
 
 /* end of drawplant.c */
