@@ -30,6 +30,13 @@ int Y_OFF = 10;	/* window y offset */
 void display(void);
 void init(void);
 
+GLfloat angle = 0;
+
+void animate(){
+	angle+=1.0f;
+	glutPostRedisplay();
+}
+
 int main (int argc, char** argv) {
   glutInit(&argc,argv);
   glutInitWindowSize(W, H);
@@ -39,6 +46,8 @@ int main (int argc, char** argv) {
   init();
 
   glutDisplayFunc(display);
+  glutIdleFunc(animate);
+  glutPostRedisplay();
   glutMainLoop();
   return 0;
 }
@@ -47,20 +56,21 @@ void init() {
   glClearColor(0.0, 0.0, 0.0, 0.0);  
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(-40.0, 40.0, -40.0, 40.0, -10.0, 10.0);
+  glOrtho(-200.0, 200.0, -50.0, 350.0, -10.0, 10.0);
 }
+
 
 
 void display() {
 	glEnable(GL_DEPTH_TEST);
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 	/* See drawplant.c for the definition of this routine */
-  
-
-  drawPlant();
-
+	glRotatef(angle,0,1,0);
+	printf("%f",angle);
+	drawPlant();
 
 
     glFlush();  /* Flush all executed OpenGL ops finish */
