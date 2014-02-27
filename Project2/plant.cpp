@@ -19,6 +19,8 @@
 #include "common.h"
 #include "drawplant.h"
 
+extern GLfloat rotation;
+
 /* GLOBAL VARAIBLES */
 /* (storage is actually allocated here) */
 int W=800;		/* window width */
@@ -30,10 +32,9 @@ int Y_OFF = 10;	/* window y offset */
 void display(void);
 void init(void);
 
-GLfloat angle = 0;
-
-void animate(){
-	angle+=1.0f;
+void idle(void){
+	rotation+=.5f;
+	rotation = (rotation > 360) ? 0 : rotation;
 	glutPostRedisplay();
 }
 
@@ -46,8 +47,7 @@ int main (int argc, char** argv) {
   init();
 
   glutDisplayFunc(display);
-  glutIdleFunc(animate);
-  glutPostRedisplay();
+  glutIdleFunc(idle);
   glutMainLoop();
   return 0;
 }
@@ -56,7 +56,7 @@ void init() {
   glClearColor(0.0, 0.0, 0.0, 0.0);  
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(-200.0, 200.0, -50.0, 350.0, -10.0, 10.0);
+  glOrtho(-300.0, 300.0, -50.0, 500.0, -300.0, 300.0);
 }
 
 
@@ -68,10 +68,8 @@ void display() {
 
 
 	/* See drawplant.c for the definition of this routine */
-	glRotatef(angle,0,1,0);
-	printf("%f",angle);
+	
 	drawPlant();
-
 
     glFlush();  /* Flush all executed OpenGL ops finish */
 

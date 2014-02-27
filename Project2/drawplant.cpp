@@ -27,8 +27,12 @@
 
 using namespace std;
 
-int depth = 5;
+extern GLfloat rotation=0;
+int depth = 7;
 
+const GLfloat* I = translate(0);
+vector<GLfloat*> state;
+GLfloat* moved;
 
 /* Takes a 2D matrix in row-major order, and loads the 3D matrix which
    does the same trasformation into the OpenGL MODELVIEW matrix, in
@@ -94,7 +98,7 @@ GLfloat* vecByMat(GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3,
 }
 
 //Matrix is passed in row-major order
-GLfloat* vecByMat(GLfloat* v, GLfloat* m){
+GLfloat* vecByMat(const GLfloat* v, const GLfloat* m){
 	return vecByMat(v[0],v[1],v[2],v[3],
 			m[0],m[1],m[2],m[3],
 			m[4],m[5],m[6],m[7],
@@ -103,7 +107,7 @@ GLfloat* vecByMat(GLfloat* v, GLfloat* m){
 }
 
 
-GLfloat* matByMat(GLfloat* A, GLfloat* B){
+GLfloat* matByMat(const GLfloat* A, const GLfloat* B){
 	GLfloat* result = new GLfloat[16];
 
 	for(int r = 0; r < 4; r++){
@@ -127,7 +131,17 @@ GLfloat* rotateXY(GLfloat angle){ //takes degrees
     return out;
 }
 
-GLfloat* translate(GLfloat x, GLfloat y=0,GLfloat z=0){ //takes degrees
+GLfloat* rotateXZ(GLfloat angle){ //takes degrees
+	GLfloat tmp[16] = {cos(PI*angle/180), 0, -sin(PI*angle/180), 0,
+				   0, 1, 0, 0,
+				   sin(PI*angle/180), 0, cos(PI*angle/180), 0,
+				   0, 0, 0, 1};
+	GLfloat* out = new GLfloat[16];
+	copy(&tmp[0], &tmp[0]+16, out);
+    return out;
+}
+
+GLfloat* translate(GLfloat x, GLfloat y,GLfloat z){ 
 	GLfloat tmp[] = {1, 0, 0, x,
 				  0, 1, 0, y,
 				  0, 0, 1, z,
@@ -145,25 +159,47 @@ void printMatrix(GLfloat* m){
 	}
 }
 
-GLfloat* turn(GLfloat deg, GLfloat* mat){
-	GLfloat* R = rotateXY(deg);
-	GLfloat* T = matByMat(mat,translate(0));
-	GLfloat* Tn = translate(mat[3],mat[7],mat[11]);
-	T[3]=0;T[7]=0;T[11]=0;
-	T=matByMat(R,T);
-	
 
-	return matByMat(Tn,T);
+
+GLfloat* turn(GLfloat deg){
+	GLfloat* R = rotateXY(deg);
+	GLfloat* T = matByMat(moved,I);
+	GLfloat* Tn = translate(moved[3],moved[7],moved[11]);
+	T[3]=0;T[7]=0;T[11]=0;
+	GLfloat* T2=matByMat(R,T);
+	GLfloat* tmp=matByMat(Tn,T2);
+	delete [] T;
+	delete [] T2;
+	delete [] Tn;
+	delete [] R;
+	delete [] moved;
+	return moved = tmp;
 }
 
-vector<GLfloat*> state;
-GLfloat* moved = translate(0);
+
 
 GLfloat* move(GLfloat num){
 	GLfloat* T = translate(num*moved[1],num*moved[0]);
 
+	GLfloat* tmp = matByMat(T,moved);
+	delete [] moved;
+	delete [] T;
+	moved = tmp;
+	return moved;
+}
 
-	return matByMat(T,moved);
+void pushState(){
+	GLfloat* tmp = matByMat(moved,I);
+	
+	state.push_back(tmp);
+}
+
+GLfloat* popState(){
+	GLfloat* back = state.back();
+	state.pop_back();
+	
+
+	return moved = back;
 }
 
 
@@ -173,48 +209,98 @@ GLfloat* move(GLfloat num){
 
 void drawLeaf(void) {
 	/* ADD YOUR CODE to make the 2D leaf a 3D extrusion */
-	
+	pushState();
+	GLfloat* R = rotateXZ(rotation);
+	GLfloat* tmp = matByMat(R,moved);
+	delete [] R;
+	delete [] moved;
+	moved = tmp;
 	load3DMatrix(moved);
-
+	popState();
+	
 	glColor3f(0.1,0.9,0.1); 
-	glBegin(GL_POLYGON);
-	glVertex2f(0.0,0.0);
-	glVertex2f(1.0,0.7);
-	glVertex2f(1.3,1.8);
-	glVertex2f(1.0,2.8);
-	glVertex2f(0.0,4.0);
-	glVertex2f(-1.0,2.8);
-	glVertex2f(-1.3,1.8);
-	glVertex2f(-1.0,0.7);
-	glEnd();
+	
+
+	GLfloat t = 2.0;
+
+	GLfloat verts[] = {
+		0.0,0.0,0, //0
+		t*1.0,t*0.7,0, //1
+		t*1.3,t*1.8,0, //2
+		t*1.0,t*2.8,0, //3
+		0.0,t*4.0,0, //4
+		-t*1.0,t*2.8,0, //5
+		-t*1.3,t*1.8,0, //6
+		-t*1.3,t*1.8,0, //7
+		0.0,t*2.0,t*1, //8 Peak
+		0.0,t*2.0,-t*1 //9 Valley
+	};
+
+	GLuint indices[] = {
+		0,1,8,
+		1,2,8,
+		2,3,8,
+		3,4,8,
+		4,5,8,
+		5,6,8,
+		6,7,8,
+		7,0,8,
+		1,0,9,
+		2,1,9,
+		3,2,9,
+		4,3,9,
+		5,4,9,
+		6,5,9,
+		7,6,9,
+		0,7,9
+	};
+
+	int num_indices;
+
+	num_indices = sizeof(indices) / sizeof(GLuint);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, 0, verts);
+	glDrawElements(GL_TRIANGLES, num_indices,
+					GL_UNSIGNED_INT, indices);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
 
 	
 }
 
 void drawBranch(void) {
 	/* ADD YOUR CODE to make the 2D branch a 3D extrusion */
-	
+	pushState();
+	GLfloat* R = rotateXZ(rotation);
+	GLfloat* tmp=matByMat(R,moved);
+	delete [] moved;
+	delete [] R;
+	moved=tmp;
 	load3DMatrix(moved);
+	popState();
+
 
 	GLfloat th = 2.0;
 
 	GLfloat verts[24]={
-		1.0,0.0,th/2, //0
-		1.0,6.0,th/2,
-		-1.0,6.0,th/2,
-		-1.0,0.0,th/2, 
-		1.0,0.0,-th/2, //4
-		1.0,6.0,-th/2,
-		-1.0,6.0,-th/2,
-		-1.0,0.0,-th/2};
+		th/2,0.0,th/2, //0
+		th/2,5.0,th/2, //1
+		-th/2,5.0,th/2, //2
+		-th/2,0.0,th/2, //3
+		th/2,0.0,-th/2, //4
+		th/2,5.0,-th/2, //5
+		-th/2,5.0,-th/2, //6
+		-th/2,0.0,-th/2}; //7
 
 	GLuint indices[24] = {
 		0,1,2,3,
-		0,1,4,5,
-		2,3,6,7,
+		0,1,5,4,
+		2,3,7,6,
 		4,5,6,7,
-		0,3,4,7,
-		1,2,5,6};
+		0,3,7,4,
+		1,2,6,5};
 
 	glColor3f(0.54,0.27,0.07); 
 	int num_indices;
@@ -240,20 +326,8 @@ void grow(void){
 void drawActualBranch(void){
 	for(int i = 0; i < branch_len;i++){
 		drawBranch();
-		moved=move(6.0f);
+		move(5.0f);
 	}
-}
-
-
-
-void pushState(GLfloat* st){
-	state.push_back(matByMat(st,translate(0)));
-}
-
-GLfloat* popState(){
-	GLfloat* back = state.back();
-	state.pop_back();
-	return matByMat(back,translate(0));
 }
 
 
@@ -262,17 +336,17 @@ void drawLeftLeaf(int i){
 		drawLeaf();
 	}else{
 		drawBranch(i-1); 
-		pushState(moved); 
-			moved=turn(30,moved); 
+		pushState(); 
+			turn(30); 
 			drawBranch(i-1); 
 			drawLeftLeaf(i-1); 
-		moved = popState(); 
+		popState(); 
 		drawBranch(i-1);
-		pushState(moved); 
-			moved = turn(-30,moved); 
+		pushState(); 
+			turn(-30); 
 			drawBranch(i-1); 
 			drawLeaf(); 
-		moved = popState();
+		popState();
 		drawBranch(i-1); 
 		drawLeftLeaf(i-1);
 	}
@@ -283,17 +357,17 @@ void drawRightLeaf(int i){
 		drawLeaf();
 	}else{
 		drawBranch(i-1); 
-		pushState(moved); 
-			moved=turn(30,moved); 
+		pushState(); 
+			turn(30); 
 			drawBranch(i-1); 
 			drawLeaf(); 
-		moved = popState(); 
+		popState(); 
 		drawBranch(i-1);
-		pushState(moved); 
-			moved = turn(-30,moved); 
+		pushState(); 
+			turn(-30); 
 			drawBranch(i-1); 
 			drawRightLeaf(i-1); 
-		moved = popState();
+		popState();
 		drawBranch(i-1); 
 		drawRightLeaf(i-1);
 	}
@@ -303,25 +377,23 @@ void drawLeaf(int i){
 	if(i==0) {drawLeaf();}
 	else{
 		drawBranch(i-1); 
-		pushState(moved); 
-			moved=turn(30,moved); 
+		pushState(); 
+			turn(30); 
 			drawBranch(i-1); 
 			drawLeftLeaf(i-1); 
-		moved = popState(); 
+		popState(); 
 		drawBranch(i-1);
-		pushState(moved); 
-			moved = turn(-30,moved); 
+		pushState(); 
+			turn(-30); 
 			drawBranch(i-1); 
 			drawRightLeaf(i-1); 
-		moved = popState();
+		popState();
 		drawBranch(i-1); 
 		drawLeaf(i-1);
 	}
 }
 
 void drawBranch(int i) {
-	//GLfloat* temp = translate(0);
-	//temp = matByMat(state,temp);
 	if(i==0){ drawActualBranch(); }
 	else {
 		 grow(); drawBranch(i-1); branch_len--;
@@ -330,8 +402,13 @@ void drawBranch(int i) {
 
 void initialize(){
 	branch_len = 1;
-	moved = translate(0);
+	
+	for(GLfloat* m: state){
+		delete [] m;
+	}
 	state.clear();
+	delete [] moved;
+	moved = matByMat(I,I);
 }
 
 void drawTree(int i) {
@@ -350,23 +427,6 @@ void drawPlant(void) {
 
 	drawTree(depth);
 	
-	
-
-
-// 	drawleaf(i){
-// if(i==0){ actual-draw-leaf() }
-// else {
-// drawbranch(i-1); pushState() ; turn left (); drawleaf (i-1); popState();
-// pushState(); turn right (); drawleaf(i-1); popState() }
-// }
-// drawbranch(i){
-// if(i==0){ actual-draw-branch() }
-// else { grow(); drawbranch(i-1)}
-// }
-// drawtree(i){
-// initialize(); drawleaf(i) }
-// }
-
 	
 
 }
