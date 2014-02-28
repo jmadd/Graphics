@@ -27,8 +27,9 @@
 
 using namespace std;
 
-extern GLfloat rotation=0;
-int depth = 7;
+GLfloat rotation;
+int depth = 1;
+int branch_len = 1;
 
 const GLfloat* I = translate(0);
 vector<GLfloat*> state;
@@ -151,6 +152,17 @@ GLfloat* translate(GLfloat x, GLfloat y,GLfloat z){
     return out;
 }
 
+GLfloat* scale(GLfloat x, GLfloat y, GLfloat z){
+	GLfloat tmp[] = {
+					x, 0, 0, 0,
+				  	0, y, 0, 0,
+				  	0, 0, z, 0,
+				  	0, 0, 0, 1};
+	GLfloat* out = new GLfloat[16];
+	copy(&tmp[0], &tmp[0]+16, out);
+    return out;
+}
+
 
 void printMatrix(GLfloat* m){
 	for(int i = 0; i < 4; i++){
@@ -188,6 +200,22 @@ GLfloat* move(GLfloat num){
 	return moved;
 }
 
+GLfloat* thicken(GLfloat scl){
+	GLfloat* S = scale(scl,1,scl);
+	GLfloat* T = matByMat(moved,I);
+	GLfloat* Tn = translate(moved[3],moved[7],moved[11]);
+	T[3]=0;T[7]=0;T[11]=0;
+	GLfloat* T2=matByMat(S,T);
+	GLfloat* tmp=matByMat(Tn,T2);
+	delete [] T;
+	delete [] T2;
+	delete [] Tn;
+	delete [] S;
+	delete [] moved;
+	return moved = tmp;
+
+}
+
 void pushState(){
 	GLfloat* tmp = matByMat(moved,I);
 	
@@ -198,7 +226,7 @@ GLfloat* popState(){
 	GLfloat* back = state.back();
 	state.pop_back();
 	
-	delete[] moved;
+	delete [] moved;
 	return moved = back;
 }
 
@@ -282,7 +310,7 @@ void drawBranch(void) {
 	popState();
 
 
-	GLfloat th = 2.0;
+	GLfloat th = 1.0f*branch_len;
 
 	GLfloat verts[24]={
 		th/2,0.0,th/2, //0
@@ -317,7 +345,6 @@ void drawBranch(void) {
 
 }
 
-int branch_len = 1;
 
 void grow(void){
 	branch_len++;
@@ -403,7 +430,7 @@ void drawBranch(int i) {
 void initialize(){
 	branch_len = 1;
 	
-	for(int i = 0; i < state.size(); i++){
+	for(uint i = 0; i < state.size(); i++){
 		GLfloat* m = state[i];
 		delete [] m;
 	}

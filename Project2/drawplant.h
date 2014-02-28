@@ -3,7 +3,8 @@
 
 /* Functions implemented in drawplant.cpp */
 
-
+extern GLfloat rotation;
+extern int depth;
 
 void drawPlant(void);
 void drawLeaf(void);
