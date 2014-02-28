@@ -28,14 +28,11 @@
 using namespace std;
 
 extern GLfloat rotation=0;
-int depth = 6;
+int depth = 7;
 
-vector<GLfloat> I(16);
-vector<vector<GLfloat>> state(20,vector<GLfloat>(16));
-int index=0;
-vector<GLfloat> moved(16);
-
-
+const GLfloat* I = translate(0);
+vector<GLfloat*> state;
+GLfloat* moved;
 
 /* Takes a 2D matrix in row-major order, and loads the 3D matrix which
    does the same trasformation into the OpenGL MODELVIEW matrix, in
@@ -77,7 +74,7 @@ void load3DMatrix(
 	glLoadMatrixf(M3D);
 }
 
-void load3DMatrix(vector<GLfloat>& m){
+void load3DMatrix(GLfloat* m){
 	load3DMatrix(m[0],m[1],m[2],m[3],
 				m[4],m[5],m[6],m[7],
 				m[8],m[9],m[10],m[11],
@@ -85,13 +82,13 @@ void load3DMatrix(vector<GLfloat>& m){
 }
 
 //Passed in row-major order
-vector<GLfloat> vecByMat(GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3,
+GLfloat* vecByMat(GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3,
 		GLfloat m00, GLfloat m01, GLfloat m02, GLfloat m03,
 		GLfloat m10, GLfloat m11, GLfloat m12, GLfloat m13,
 		GLfloat m20, GLfloat m21, GLfloat m22, GLfloat m23,
 		GLfloat m30, GLfloat m31, GLfloat m32, GLfloat m33){
 
-	vector<GLfloat> result(4);
+	GLfloat* result = new GLfloat[4];
 	result[0] = v0*m00+v1*m01+v2*m02+v3*m03;
 	result[1] = v0*m10+v1*m11+v2*m12+v3*m13;
 	result[2] = v0*m20+v1*m21+v2*m22+v3*m23;
@@ -101,17 +98,17 @@ vector<GLfloat> vecByMat(GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3,
 }
 
 //Matrix is passed in row-major order
-void vecByMat(vector<GLfloat>& v, const vector<GLfloat>& m){
-	v.swap(vecByMat(v[0],v[1],v[2],v[3],
+GLfloat* vecByMat(const GLfloat* v, const GLfloat* m){
+	return vecByMat(v[0],v[1],v[2],v[3],
 			m[0],m[1],m[2],m[3],
 			m[4],m[5],m[6],m[7],
 			m[8],m[9],m[10],m[11],
-			m[12],m[13],m[14],m[15]));
+			m[12],m[13],m[14],m[15]);
 }
 
 
-void matByMat(const vector<GLfloat>& A, vector<GLfloat>& B){
-	vector<GLfloat> result(16);
+GLfloat* matByMat(const GLfloat* A, const GLfloat* B){
+	GLfloat* result = new GLfloat[16];
 
 	for(int r = 0; r < 4; r++){
 		for(int c = 0; c < 4; c++){
@@ -121,30 +118,41 @@ void matByMat(const vector<GLfloat>& A, vector<GLfloat>& B){
 		}
 	}
 
-	B.swap(result);
+	return result;
 }
 
-void rotateXY(GLfloat angle, vector<GLfloat>& out){ //takes degrees
-	
-	out[10]=1;out[15]=1;
-	out[0]=cos(PI*angle/180);out[1]=-sin(PI*angle/180);
-	out[4]=sin(PI*angle/180);out[5]=cos(PI*angle/180);
+GLfloat* rotateXY(GLfloat angle){ //takes degrees
+	GLfloat tmp[16] = {cos(PI*angle/180), -sin(PI*angle/180), 0, 0,
+				   sin(PI*angle/180), cos(PI*angle/180), 0, 0,
+				   0, 0, 1, 0,
+				   0, 0, 0, 1};
+	GLfloat* out = new GLfloat[16];
+	copy(&tmp[0], &tmp[0]+16, out);
+    return out;
 }
 
-void rotateXZ(GLfloat angle, vector<GLfloat>& out){ //takes degrees
-	
-	out[5]=1;out[15]=1;
-	out[0]=cos(PI*angle/180);out[2]=-sin(PI*angle/180);
-	out[8]=sin(PI*angle/180);out[10]=cos(PI*angle/180);
+GLfloat* rotateXZ(GLfloat angle){ //takes degrees
+	GLfloat tmp[16] = {cos(PI*angle/180), 0, -sin(PI*angle/180), 0,
+				   0, 1, 0, 0,
+				   sin(PI*angle/180), 0, cos(PI*angle/180), 0,
+				   0, 0, 0, 1};
+	GLfloat* out = new GLfloat[16];
+	copy(&tmp[0], &tmp[0]+16, out);
+    return out;
 }
 
-void translate(GLfloat x, GLfloat y,GLfloat z, vector<GLfloat>& out){ 
-	out[0]=1;out[5]=1;out[10]=1;out[15]=1;
-	out[3]=x;out[7]=y;out[11]=z;
+GLfloat* translate(GLfloat x, GLfloat y,GLfloat z){ 
+	GLfloat tmp[] = {1, 0, 0, x,
+				  0, 1, 0, y,
+				  0, 0, 1, z,
+				  0, 0, 0, 1};
+	GLfloat* out = new GLfloat[16];
+	copy(&tmp[0], &tmp[0]+16, out);
+    return out;
 }
 
 
-void printMatrix(vector<GLfloat>& m){
+void printMatrix(GLfloat* m){
 	for(int i = 0; i < 4; i++){
 		int I = i*4;
 		printf("%f %f %f %f\n",m[I],m[I+1],m[I+2],m[I+3]);
@@ -153,36 +161,45 @@ void printMatrix(vector<GLfloat>& m){
 
 
 
-void turn(GLfloat deg){
-	vector<GLfloat> R(16);
-	rotateXY(deg,R);
-	
-	vector<GLfloat> Tn(16);
-	translate(moved[3],moved[7],moved[11],Tn);
-	moved[3]=0;moved[7]=0;moved[11]=0;
-	matByMat(R,moved);
-	matByMat(Tn,moved);
-	
+GLfloat* turn(GLfloat deg){
+	GLfloat* R = rotateXY(deg);
+	GLfloat* T = matByMat(moved,I);
+	GLfloat* Tn = translate(moved[3],moved[7],moved[11]);
+	T[3]=0;T[7]=0;T[11]=0;
+	GLfloat* T2=matByMat(R,T);
+	GLfloat* tmp=matByMat(Tn,T2);
+	delete [] T;
+	delete [] T2;
+	delete [] Tn;
+	delete [] R;
+	delete [] moved;
+	return moved = tmp;
 }
 
 
 
-void move(GLfloat num){
-	moved[3]+= num*moved[1];
-	moved[7]+= num*moved[0];
+GLfloat* move(GLfloat num){
+	GLfloat* T = translate(num*moved[1],num*moved[0]);
+
+	GLfloat* tmp = matByMat(T,moved);
+	delete [] moved;
+	delete [] T;
+	moved = tmp;
+	return moved;
 }
 
 void pushState(){
+	GLfloat* tmp = matByMat(moved,I);
 	
-	copy(&moved[0],&moved[0]+16,&(state[index][0]));
-	
-	index++;
+	state.push_back(tmp);
 }
 
-void popState(){
-	index--;
-	moved.swap(state[index]);
+GLfloat* popState(){
+	GLfloat* back = state.back();
+	state.pop_back();
 	
+	delete[] moved;
+	return moved = back;
 }
 
 
@@ -193,10 +210,11 @@ void popState(){
 void drawLeaf(void) {
 	/* ADD YOUR CODE to make the 2D leaf a 3D extrusion */
 	pushState();
-	vector<GLfloat> R(16);
-	rotateXZ(rotation,R);
-	matByMat(R,moved);
-	
+	GLfloat* R = rotateXZ(rotation);
+	GLfloat* tmp = matByMat(R,moved);
+	delete [] R;
+	delete [] moved;
+	moved = tmp;
 	load3DMatrix(moved);
 	popState();
 	
@@ -254,12 +272,12 @@ void drawLeaf(void) {
 
 void drawBranch(void) {
 	/* ADD YOUR CODE to make the 2D branch a 3D extrusion */
-	
-
 	pushState();
-	vector<GLfloat> R(16);
-	rotateXZ(rotation,R);
-	matByMat(R,moved);
+	GLfloat* R = rotateXZ(rotation);
+	GLfloat* tmp=matByMat(R,moved);
+	delete [] moved;
+	delete [] R;
+	moved=tmp;
 	load3DMatrix(moved);
 	popState();
 
@@ -385,10 +403,14 @@ void drawBranch(int i) {
 void initialize(){
 	branch_len = 1;
 	
-	//state.clear();
-	translate(0,0,0,I);
+	for(int i = 0; i < state.size(); i++){
+		GLfloat* m = state[i];
+		delete [] m;
+	}
+	state.clear();
+	delete [] moved;
+	moved = new GLfloat[16];
 	copy(&I[0],&I[0]+16,&moved[0]);
-	index=0;
 }
 
 void drawTree(int i) {

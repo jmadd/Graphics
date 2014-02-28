@@ -36,7 +36,6 @@ void idle(void){
 	rotation+=.5f;
 	rotation = (rotation > 360) ? 0 : rotation;
 	glutPostRedisplay();
-	printf("Rotation = %f\n",rotation);
 }
 
 int main (int argc, char** argv) {
@@ -46,7 +45,6 @@ int main (int argc, char** argv) {
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutCreateWindow("plant");
   init();
-  
 
   glutDisplayFunc(display);
   glutIdleFunc(idle);
