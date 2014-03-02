@@ -353,7 +353,7 @@ void drawLeftLeaf(int i){
 		if(rand()%2==0){
 		pushState(); 
 			turn(-(rand()%20-10)-30); 
-			drawBranch(i-1); 
+			drawBranch(1); 
 			drawLeaf(); 
 			popState();}
 		drawBranch(i-1); 
@@ -369,7 +369,7 @@ void drawRightLeaf(int i){
 		if(rand()%2==0){
 		pushState(); 
 			turn((rand()%20-10)+30); 
-			drawBranch(i-1); 
+			drawBranch(1); 
 			drawLeaf(); 
 			popState(); }
 
@@ -423,7 +423,7 @@ void initialize(){
 	delete [] moved;
 	moved = new GLfloat[16];
 	copy(&I[0],&I[0]+16,&moved[0]);
-	srand(0);
+	srand(5);
 }
 
 void drawTree(int i) {
