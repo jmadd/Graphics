@@ -188,32 +188,13 @@ GLfloat* turn(GLfloat deg){
 	return moved = tmp;
 }
 
-
-
 GLfloat* move(GLfloat num){
 	GLfloat* T = translate(num*moved[1],num*moved[0]);
-
 	GLfloat* tmp = matByMat(T,moved);
 	delete [] moved;
 	delete [] T;
 	moved = tmp;
 	return moved;
-}
-
-GLfloat* thicken(GLfloat scl){
-	GLfloat* S = scale(scl,1,scl);
-	GLfloat* T = matByMat(moved,I);
-	GLfloat* Tn = translate(moved[3],moved[7],moved[11]);
-	T[3]=0;T[7]=0;T[11]=0;
-	GLfloat* T2=matByMat(S,T);
-	GLfloat* tmp=matByMat(Tn,T2);
-	delete [] T;
-	delete [] T2;
-	delete [] Tn;
-	delete [] S;
-	delete [] moved;
-	return moved = tmp;
-
 }
 
 void pushState(){
@@ -310,16 +291,16 @@ void drawBranch(void) {
 	popState();
 
 
-	GLfloat th = 1.0f*branch_len;
+	GLfloat th = branch_len;
 
 	GLfloat verts[24]={
 		th/2,0.0,th/2, //0
-		th/2,5.0,th/2, //1
-		-th/2,5.0,th/2, //2
+		th/2-.5,5.0,th/2-.5, //1
+		-th/2+.5,5.0,th/2-.5, //2
 		-th/2,0.0,th/2, //3
 		th/2,0.0,-th/2, //4
-		th/2,5.0,-th/2, //5
-		-th/2,5.0,-th/2, //6
+		th/2-0.5,5.0,-th/2+0.5, //5
+		-th/2+0.5,5.0,-th/2+0.5, //6
 		-th/2,0.0,-th/2}; //7
 
 	GLuint indices[24] = {
@@ -364,16 +345,17 @@ void drawLeftLeaf(int i){
 	}else{
 		drawBranch(i-1); 
 		pushState(); 
-			turn(30); 
+			turn((rand()%20-10)+30); 
 			drawBranch(i-1); 
 			drawLeftLeaf(i-1); 
 		popState(); 
 		drawBranch(i-1);
+		if(rand()%2==0){
 		pushState(); 
-			turn(-30); 
+			turn(-(rand()%20-10)-30); 
 			drawBranch(i-1); 
 			drawLeaf(); 
-		popState();
+			popState();}
 		drawBranch(i-1); 
 		drawLeftLeaf(i-1);
 	}
@@ -384,14 +366,17 @@ void drawRightLeaf(int i){
 		drawLeaf();
 	}else{
 		drawBranch(i-1); 
+		if(rand()%2==0){
 		pushState(); 
-			turn(30); 
+			turn((rand()%20-10)+30); 
 			drawBranch(i-1); 
 			drawLeaf(); 
-		popState(); 
+			popState(); }
+
 		drawBranch(i-1);
+
 		pushState(); 
-			turn(-30); 
+			turn(-(rand()%20-10)-30); 
 			drawBranch(i-1); 
 			drawRightLeaf(i-1); 
 		popState();
@@ -405,13 +390,13 @@ void drawLeaf(int i){
 	else{
 		drawBranch(i-1); 
 		pushState(); 
-			turn(30); 
+			turn((rand()%20-10)+30); 
 			drawBranch(i-1); 
 			drawLeftLeaf(i-1); 
 		popState(); 
 		drawBranch(i-1);
 		pushState(); 
-			turn(-30); 
+			turn(-(rand()%20-10)-30); 
 			drawBranch(i-1); 
 			drawRightLeaf(i-1); 
 		popState();
@@ -430,7 +415,7 @@ void drawBranch(int i) {
 void initialize(){
 	branch_len = 1;
 	
-	for(uint i = 0; i < state.size(); i++){
+	for(GLuint i = 0; i < state.size(); i++){
 		GLfloat* m = state[i];
 		delete [] m;
 	}
@@ -438,10 +423,10 @@ void initialize(){
 	delete [] moved;
 	moved = new GLfloat[16];
 	copy(&I[0],&I[0]+16,&moved[0]);
+	srand(0);
 }
 
 void drawTree(int i) {
-	//initialize?
 	initialize();
 	drawLeaf(i);
 }
