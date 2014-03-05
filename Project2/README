@@ -2,11 +2,49 @@
  * README
  * ------
  * Put your L-System descripton and answers to the two group questions
- * here.  Also, include the names of your team members and any special
+ * There.  Also, include the names of your team members and any special
  * instructions for compiling, etc., if you used something besides the
  * standard Makefile.
  *
- * Group Members: <FILL IN>
- * Email Addresses:
+ * Our L-System consists of:
+
+ F − Move Forward
+L0, L1, L2 − Draw Leaf
+T − Draw Terminating Leaf
+"+" − Turn Right
+"−" − Turn Left
+"[" − Push
+"]" − Pop
+"s" - half the depth
+"r" - randomized
+
+Initial State: T
+Axiom: L0
+1. L0 −> F [ r(−) F L1 ] r(F) [ r(+) F L2 ] F F L0 (center branch)
+2. L1 −> F [ r(−) F L1 ] [ r(−) s (F L1) ] r(F) [ r(+) F T ] F L1 (left half of tree)
+3. L2 −> F [ r(−) F T ] F [ r(+) F L2 ] [ r(+) s (F L2) ] F L2 (right half of tree)
+
+ *
+  In addition to the expected key bindings, we added '[' and ']' which decreases  and increasing the speed of rotation when '/' and '?' are used to rotate the
+  tree. 
+
+  We added the following additional features:
+    We implemented randomness to affect which branches are generated and what 
+    angle they are generated at. We implemented a different L-system, descibed
+    aboved. We also implroved the 3-D extrusion of the branches by making them
+    more curved. We also added a change in thickness in branches as the tree is
+    created. When we did this, to make the tree look less blocky, we formed the     branches as smaller at the top than the bottom, rather than propertional. 
+ *
+ * Questions:
+ *
+ * 1) As we rotate the tree in perspective view, it is much easier to tell which side of the tree is closer to the camera.
+ *
+ * 2) Perspective view gives an added perception of depth in the z direction. 
+ *    It accomplishes this by increasing the size of things with less distance to the camera.
+ *
+ *
+ *
+ * Group Members: Nick Crum, Jared Maddox
+ * Email Addresses: ncrum@utexas.edu, jared@jlmaddox.com
  */
 
