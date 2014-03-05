@@ -188,12 +188,33 @@ GLfloat* turn(GLfloat deg){
 	return moved = tmp;
 }
 
+GLfloat* turnd(GLfloat deg){
+	GLfloat* R = rotateXZ(deg);
+	GLfloat* T = matByMat(moved,I);
+	GLfloat* Tn = translate(moved[3],moved[7],moved[11]);
+	T[3]=0;T[7]=0;T[11]=0;
+	GLfloat* T2=matByMat(R,T);
+	GLfloat* tmp=matByMat(Tn,T2);
+	delete [] T;
+	delete [] T2;
+	delete [] Tn;
+	delete [] R;
+	delete [] moved;
+	return moved = tmp;
+}
+
 GLfloat* move(GLfloat num){
-	GLfloat* T = translate(num*moved[1],num*moved[0]);
-	GLfloat* tmp = matByMat(T,moved);
+	GLfloat v[4] = {0,num,0,0};
+	GLfloat* tmp = matByMat(moved,I);
+	tmp[3]=0;tmp[7]=0;tmp[11]=0;
+	GLfloat* T = vecByMat(v,tmp);
+	GLfloat* T2 = translate(T[0],T[1],T[2]);
+	GLfloat* result = matByMat(T2,moved);
 	delete [] moved;
 	delete [] T;
-	moved = tmp;
+	delete [] tmp;
+	delete [] T2;
+	moved = result;
 	return moved;
 }
 
@@ -345,13 +366,22 @@ void drawLeftLeaf(int i){
 	}else{
 		drawBranch(i-1); 
 		pushState(); 
+			turnd((rand()%60-30));
 			turn((rand()%20-10)+30); 
 			drawBranch(i-1); 
-			drawLeftLeaf(i-1); 
+			pushState();
+				drawBranch(i-1); 
+				drawL3Leaf(i-1); 
+			popState();
+			pushState();
+				drawBranch(i-1); 
+				drawL5Leaf(i-1);
+			popState();
 		popState(); 
 		drawBranch(i-1);
 		if(rand()%2==0){
 		pushState(); 
+
 			turn(-(rand()%20-10)-30); 
 			drawBranch(1); 
 			drawLeaf(); 
@@ -376,26 +406,151 @@ void drawRightLeaf(int i){
 		drawBranch(i-1);
 
 		pushState(); 
-			turn(-(rand()%20-10)-30); 
+			
+			turnd((rand()%60-30));
+			turn(-(rand()%20-10)-30);
 			drawBranch(i-1); 
-			drawRightLeaf(i-1); 
+			pushState();
+				drawBranch(i-1); 
+				drawL4Leaf(i-1);
+			popState();
+			pushState();
+				drawBranch(i-1);
+				drawL6Leaf(i-1);
+			popState();
 		popState();
+
 		drawBranch(i-1); 
 		drawRightLeaf(i-1);
 	}
 }
+
+void drawL3Leaf(int i){
+	if(i==0){
+		drawLeaf();
+	}else{
+		drawBranch(i-1); 
+		pushState(); 
+			turnd(45);
+			drawBranch(i-1); 
+			drawLeftLeaf(i-1); 
+		popState(); 
+		drawBranch(i-1);
+		if(rand()%2==0){
+		pushState(); 
+			turnd(-45);
+			drawBranch(1); 
+			drawLeaf(); 
+			popState();}
+		drawBranch(i-1); 
+		drawL3Leaf(i-1);
+	}
+}
+
+void drawL4Leaf(int i){
+	if(i==0){
+		drawLeaf();
+	}else{
+		drawBranch(i-1); 
+		if(rand()%2==0){
+		pushState(); 
+			turnd(45);
+			drawBranch(1); 
+			drawLeaf(); 
+			popState(); }
+
+		drawBranch(i-1);
+
+		pushState(); 
+			
+			turnd(-45); 
+			drawBranch(i-1); 
+			drawRightLeaf(i-1);
+		popState();
+
+		drawBranch(i-1); 
+		drawL4Leaf(i-1);
+	}
+}
+
+void drawL5Leaf(int i){
+	if(i==0){
+		drawLeaf();
+	}else{
+		drawBranch(i-1); 
+		if(rand()%2==0){
+		pushState(); 
+			turnd(45);
+			drawBranch(1); 
+			drawLeaf(); 
+			popState(); }
+
+		drawBranch(i-1);
+
+		pushState(); 
+			
+			turnd(-45); 
+			drawBranch(i-1); 
+			drawLeftLeaf(i-1);
+		popState();
+
+		drawBranch(i-1); 
+		drawL5Leaf(i-1);
+	}
+}
+
+void drawL6Leaf(int i){
+	if(i==0){
+		drawLeaf();
+	}else{
+		drawBranch(i-1); 
+		pushState(); 
+			turnd(45);
+			drawBranch(i-1); 
+			drawRightLeaf(i-1); 
+		popState(); 
+		drawBranch(i-1);
+		if(rand()%2==0){
+		pushState(); 
+			turnd(-45);
+			drawBranch(1); 
+			drawLeaf(); 
+			popState();}
+		drawBranch(i-1); 
+		drawL6Leaf(i-1);
+	}
+}
+
+/*
+
+L0
+L0 -> F [ - F L1 ] F [ + F L2 ] F L0
+L1 -> F [ - [F L3] [F L5] F [ + F T ] F L1
+L2 -> F [ - F T ] F [ + [F L4] [F L5] ] F L2
+L3 -> F [ r F L1 ] F [ b F T ] F L3
+L4 -> F [ r F T ] F [ b F L2 ] F L4
+L5 -> F [ r F T ] F [ b F L1 ] F L5
+L6 -> F [ r F L2 ] F [ b F T ] F L6
+
+
+
+
+*/
 
 void drawLeaf(int i){
 	if(i==0) {drawLeaf();}
 	else{
 		drawBranch(i-1); 
 		pushState(); 
+			turnd((rand()%60-30));
 			turn((rand()%20-10)+30); 
 			drawBranch(i-1); 
 			drawLeftLeaf(i-1); 
 		popState(); 
 		drawBranch(i-1);
+
 		pushState(); 
+			turnd((rand()%60-30));
 			turn(-(rand()%20-10)-30); 
 			drawBranch(i-1); 
 			drawRightLeaf(i-1); 
