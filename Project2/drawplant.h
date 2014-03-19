@@ -20,6 +20,12 @@ void pushState(const GLfloat*);
 GLfloat* popState(void);
 GLfloat* translate(GLfloat x, GLfloat y=0,GLfloat z=0);
 void drawLeaf(int);
+void drawRightLeaf(int);
+void drawLeftLeaf(int);
+void drawL3Leaf(int);
+void drawL4Leaf(int);
+void drawL5Leaf(int);
+void drawL6Leaf(int);
 void drawBranch(int);
 void drawTree(int);
 
