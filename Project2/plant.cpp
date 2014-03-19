@@ -31,7 +31,7 @@
 GLfloat fleft   = -400.0;
 GLfloat fright  =  400.0;
 GLfloat fbottom = -50.0;
-GLfloat ftop    =  500.0;
+GLfloat ftop    =  560.0;
 GLfloat zNear   = 1000.0;
 GLfloat zFar    = -1000.0;
 
@@ -91,7 +91,7 @@ void init() {
   if(ortho) glOrtho(fleft, fright, fbottom, ftop, zFar, zNear);
   else{
     //Perspective
-    gluPerspective(30,(fright-fleft)/(ftop-fbottom),1,zNear-zFar);
+    gluPerspective(33,(fright-fleft)/(ftop-fbottom),1,zNear-zFar);
     glTranslatef(
     0,
     -(ftop+fbottom)/2,
