@@ -7,5 +7,7 @@ extern int subdiv_h; // The user-specified subdivision level, horizontal
 
 /* Functions implemented in drawing.cpp */
 void drawSurface(void);
+void drawPoints(void);
+void drawLines(void);
 
 #endif	/* _DRAWING_H_ */

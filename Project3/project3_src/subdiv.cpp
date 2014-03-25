@@ -60,6 +60,8 @@ void init() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(fleft, fright, fbottom, ftop, -zNear, -zFar);
+	num_i0_pts = -1;
+	
 }
 
 void display() {
@@ -73,8 +75,14 @@ void display() {
 	 * Note: Only one should be called at a time (based on the
 	 * display mode).
 	 */
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glBegin(GL_LINES);
+	glVertex3f(0.0f, -40.0f, 3.2f);
+	glVertex3f(0.0f, 40.0f, 3.2f);
+	glEnd();
 
-	drawSurface();
+	drawPoints();
+	drawLines();
 
     glFlush();  /* Flush all executed OpenGL ops finish */
 
@@ -104,9 +112,30 @@ void myMouseButton(int button, int state, int x, int y) {
 	if (state == GLUT_DOWN) {
 		if (button == GLUT_LEFT_BUTTON) {
 			// Add a point, if there is room
-			printf("x: %3d, y: %3d\n", x, y);
+			if(x >= 195 && x <= 205) {
+				x = 200;
+			}
+
+			if(num_i0_pts < MAX_POINT && x >= 200) {
+				printf("Point %d added at x: %3d, y: %3d\n", num_i0_pts, x, y);
+				num_i0_pts++;
+				i0_x[num_i0_pts] = x/5 - 40;
+				i0_y[num_i0_pts] = (y/5 - 40) * -1;
+			}
+			else {
+				printf("No more points can be added.\n");
+			}
+		}
+		if (button == GLUT_RIGHT_BUTTON) {
+			if(num_i0_pts >= 0) {
+				printf("Point %d deleted\n", num_i0_pts);
+				i0_x[num_i0_pts] = 0;
+				i0_y[num_i0_pts] = 0;
+				num_i0_pts--;
+			}
 		}
 	}
+	display();
 }
 
 void endSubdiv(int status) {
