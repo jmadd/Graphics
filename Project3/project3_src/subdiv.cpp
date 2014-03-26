@@ -34,6 +34,10 @@ GLfloat ftop    =  40.0;
 GLfloat zNear   =  40.0;
 GLfloat zFar    = -40.0;
 
+bool mode3d = false;
+bool wireframe = false;
+bool disp_points = false;
+
 /* local function declarations */
 void init(void);
 void display(void);
@@ -81,9 +85,19 @@ void display() {
 	glVertex3f(0.0f, 40.0f, 3.2f);
 	glEnd();
 
-	drawPoints();
-	drawLines();
 
+	if(mode3d){
+		if(disp_points) {
+			drawSurfacePoints();
+		}
+		else if(wireframe)
+			drawSurfaceWireframe();
+		else 
+			drawSurfaceSolid();
+	}else{
+		drawPoints();
+		drawLines();
+	}	
     glFlush();  /* Flush all executed OpenGL ops finish */
 
     /*
@@ -95,6 +109,15 @@ void display() {
 
 void myKeyHandler(unsigned char ch, int x, int y) {
 	switch(ch) {
+		case 'z':
+			mode3d = (mode3d) ? false : true;
+			break;
+		case 'e':
+			wireframe = (wireframe) ? false: true;
+			break;
+		case 'r':
+			disp_points = (disp_points) ? false: true;
+			break;
 		case 'q':
 			endSubdiv(0);
 			break;
@@ -109,7 +132,7 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 }
 
 void myMouseButton(int button, int state, int x, int y) {
-	if (state == GLUT_DOWN) {
+	if (state == GLUT_DOWN && mode3d == false) {
 		if (button == GLUT_LEFT_BUTTON) {
 			// Add a point, if there is room
 			if(x >= 195 && x <= 205) {

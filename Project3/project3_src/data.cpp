@@ -121,6 +121,30 @@ void subdividePointsArray(int subdiv_level) {
 	assert(subdiv_level >= 0);
 
 	/* ADD YOUR CODE HERE */
+	if (subdiv_level == 0) {
+		for(all of i0_x) {
+			draw_x[i] = i0_x[i];
+		}
+	}
+
+	GLfloat tmp_draw_x [num_draw_pts];
+	GLfloat new_draw_x [num_draw_pts];
+
+	for(int i = 0; i <= num_draw_pts; i++){
+		tmp_draw_x[i] = draw_x[i];
+	}
+
+	else {
+		for(int i = 1; i < num_draw_pts; i++){
+			draw_x[i] = .125f * (tmp_draw_x[i-1] + 6 * tmp_draw_x[i] + tmp_draw_x[i+1]);
+		}
+		for(int i = 0; i < num_draw_pts; i++) {
+			new_draw_x[i] = .125f * (4 * tmp_draw_x[i] + 4 * tmp_draw_x[i+1]);
+		}
+		draw_x = mergePointsArrays(draw_x, new_draw_x);
+	}
+	num_draw_pts = num_draw_pts * 2 - 1;
+
 
 	return;
 }
