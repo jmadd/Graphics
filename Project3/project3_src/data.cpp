@@ -122,30 +122,46 @@ void subdividePointsArray(int subdiv_level) {
 
 	/* ADD YOUR CODE HERE */
 	if (subdiv_level == 0) {
-		for(all of i0_x) {
+		draw_x = makePointsArray(num_i0_pts+1);
+		draw_y = makePointsArray(num_i0_pts+1);
+		for(int i = 0; i <= num_i0_pts; i++) {
 			draw_x[i] = i0_x[i];
+			draw_y[i] = i0_y[i];
 		}
+		num_draw_pts = num_i0_pts;
+		return;
 	}
-
-	GLfloat tmp_draw_x [num_draw_pts];
-	GLfloat new_draw_x [num_draw_pts];
-
+	subdividePointsArray(subdiv_level-1);
+	
+	GLfloat* tmp_draw_x = makePointsArray(num_draw_pts+1);
+	GLfloat* new_draw_x = makePointsArray(num_draw_pts);
+	GLfloat* tmp_draw_y = makePointsArray(num_draw_pts+1);
+	GLfloat* new_draw_y = makePointsArray(num_draw_pts);
+	
 	for(int i = 0; i <= num_draw_pts; i++){
 		tmp_draw_x[i] = draw_x[i];
+		tmp_draw_y[i] = draw_y[i];
+		
 	}
-
-	else {
-		for(int i = 1; i < num_draw_pts; i++){
-			draw_x[i] = .125f * (tmp_draw_x[i-1] + 6 * tmp_draw_x[i] + tmp_draw_x[i+1]);
-		}
-		for(int i = 0; i < num_draw_pts; i++) {
-			new_draw_x[i] = .125f * (4 * tmp_draw_x[i] + 4 * tmp_draw_x[i+1]);
-		}
-		draw_x = mergePointsArrays(draw_x, new_draw_x);
+	
+	for(int i = 1; i < num_draw_pts; i++){
+		draw_x[i] = .125f * (tmp_draw_x[i-1] + 6 * tmp_draw_x[i] + tmp_draw_x[i+1]);
+		draw_y[i] = .125f * (tmp_draw_y[i-1] + 6 * tmp_draw_y[i] + tmp_draw_y[i+1]);
 	}
-	num_draw_pts = num_draw_pts * 2 - 1;
-
-
+	for(int i = 0; i < num_draw_pts; i++) {
+		new_draw_x[i] = .125f * (4 * tmp_draw_x[i] + 4 * tmp_draw_x[i+1]);
+		new_draw_y[i] = .125f * (4 * tmp_draw_y[i] + 4 * tmp_draw_y[i+1]);
+	}
+	printf("%d\n",num_draw_pts);
+	draw_x = mergePointsArrays(draw_x, new_draw_x, num_draw_pts);
+	draw_y = mergePointsArrays(draw_y, new_draw_y, num_draw_pts);
+	
+	draw_x[num_draw_pts*2] = tmp_draw_x[num_draw_pts];
+	draw_y[num_draw_pts*2] = tmp_draw_y[num_draw_pts];
+	num_draw_pts = num_draw_pts * 2;
+	free(tmp_draw_x);
+	free(tmp_draw_y);
+	
 	return;
 }
 

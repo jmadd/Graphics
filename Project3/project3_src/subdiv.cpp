@@ -65,7 +65,8 @@ void init() {
 	glLoadIdentity();
 	glOrtho(fleft, fright, fbottom, ftop, -zNear, -zFar);
 	num_i0_pts = -1;
-	
+	subdiv_v=0;
+	subdiv_h=0;
 }
 
 void display() {
@@ -85,6 +86,8 @@ void display() {
 	glVertex3f(0.0f, 40.0f, 3.2f);
 	glEnd();
 
+	if(num_i0_pts > -1){
+	subdividePointsArray(subdiv_v);
 
 	if(mode3d){
 		if(disp_points) {
@@ -97,7 +100,7 @@ void display() {
 	}else{
 		drawPoints();
 		drawLines();
-	}	
+	}	}
     glFlush();  /* Flush all executed OpenGL ops finish */
 
     /*
@@ -117,6 +120,9 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 			break;
 		case 'r':
 			disp_points = (disp_points) ? false: true;
+			break;
+		case 's':
+			subdiv_v++;
 			break;
 		case 'q':
 			endSubdiv(0);

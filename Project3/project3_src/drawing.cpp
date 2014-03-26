@@ -33,10 +33,10 @@ void drawPoints(void) {
     glColor3f(0.0f,0.0f,1.0f); //blue color
 	glPointSize(3.0f);
 	glBegin(GL_POINTS);
-	for(int i = 0; i <= num_i0_pts; i++) {
+	for(int i = 0; i <= num_draw_pts; i++) {
 		//Conversion of ratios between input and output
-		int x = i0_x[i];
-		int y = i0_y[i];
+		int x = draw_x[i];
+		int y = draw_y[i];
 		//printf("(%d, %d) should be drawn\n", x, y);
 		glVertex3f(x, y, 0.0f);
 	}
@@ -46,10 +46,10 @@ void drawPoints(void) {
 void drawLines(void) {
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i <= num_i0_pts; i++) {
+	for(int i = 0; i <= num_draw_pts; i++) {
 		//Conversion of ratios between input and output
-		int x = i0_x[i];
-		int y = i0_y[i];
+		int x = draw_x[i];
+		int y = draw_y[i];
 		//printf("(%d, %d) should be drawn\n", x, y);
 		glVertex3f(x, y, 0.0f);
 	}
@@ -63,27 +63,27 @@ void drawSurfaceSolid(void){
 	GLfloat rot240x [MAX_POINT];
 	GLfloat rot240z [MAX_POINT];
 
-	for(int i = 0; i <= num_i0_pts; i++) {
-		rot120x[i] = -0.5f * i0_x[i];
-		rot120z[i] = .86603 * i0_x[i];
+	for(int i = 0; i <= num_draw_pts; i++) {
+		rot120x[i] = -0.5f * draw_x[i];
+		rot120z[i] = .86603 * draw_x[i];
 		rot240x[i] = rot120x[i];
 		rot240z[i] = rot120z[i] * -1;
 	}
 
 	glColor3f(0.0f,0.0f,1.0f); //blue color
 	int i = 0;
-	GLfloat x1 = i0_x[i];
-	GLfloat y = i0_y[i];
+	GLfloat x1 = draw_x[i];
+	GLfloat y = draw_y[i];
 	GLfloat z1 = 0;
 	GLfloat x2 = rot120x[i];
 	GLfloat z2 = rot120z[i];
-	for(i = 1; i <= num_i0_pts; i++){
+	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_POLYGON);
 		
 		glVertex3f(x1,y,z1);
 		glVertex3f(x2,y,z2);
-		x1 = i0_x[i];
-		y = i0_y[i];
+		x1 = draw_x[i];
+		y = draw_y[i];
 		z1 = 0;
 		x2 = rot120x[i];
 		z2 = rot120z[i];
@@ -95,18 +95,18 @@ void drawSurfaceSolid(void){
 	}
 
 	i = 0;
-	x1 = i0_x[i];
-	y = i0_y[i];
+	x1 = draw_x[i];
+	y = draw_y[i];
 	z1 = 0;
 	GLfloat x3 = rot120x[i];
 	GLfloat z3 = rot120z[i];
-	for(i = 1; i <= num_i0_pts; i++){
+	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_POLYGON);
 		
 		glVertex3f(x1,y,z1);
 		glVertex3f(x3,y,z3);
-		x1 = i0_x[i];
-		y = i0_y[i];
+		x1 = draw_x[i];
+		y = draw_y[i];
 		z1 = 0;
 		x2 = rot240x[i];
 		z2 = rot240z[i];
@@ -119,17 +119,17 @@ void drawSurfaceSolid(void){
 
 	i = 0;
 	x3 = rot240x[i];
-	y = i0_y[i];
+	y = draw_y[i];
 	z3 = rot240z[i];
 	x2 = rot120x[i];
 	z2 = rot120z[i];
-	for(i = 1; i <= num_i0_pts; i++){
+	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_POLYGON);
 		
 		glVertex3f(x3,y,z3);
 		glVertex3f(x2,y,z2);
 		x3 = rot240x[i];
-		y = i0_y[i];
+		y = draw_y[i];
 		z3 = rot240z[i];
 		x2 = rot120x[i];
 		z2 = rot120z[i];
@@ -147,80 +147,80 @@ void drawSurfaceWireframe(void){
 	GLfloat rot240x [MAX_POINT];
 	GLfloat rot240z [MAX_POINT];
 
-	for(int i = 0; i <= num_i0_pts; i++) {
-		rot120x[i] = -0.5f * i0_x[i];
-		rot120z[i] = .86603 * i0_x[i];
+	for(int i = 0; i <= num_draw_pts; i++) {
+		rot120x[i] = -0.5f * draw_x[i];
+		rot120z[i] = .86603 * draw_x[i];
 		rot240x[i] = rot120x[i];
 		rot240z[i] = rot120z[i] * -1;
 	}
 
 	glColor3f(0.0f,0.0f,1.0f); //blue color
 	int i = 0;
-	GLfloat x1 = i0_x[i];
-	GLfloat y = i0_y[i];
+	GLfloat x1 = draw_x[i];
+	GLfloat y = draw_y[i];
 	GLfloat z1 = 0;
 	GLfloat x2 = rot120x[i];
 	GLfloat z2 = rot120z[i];
-	for(i = 1; i <= num_i0_pts; i++){
+	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_LINE_STRIP);
 		
 		glVertex3f(x1,y,z1);
 		glVertex3f(x2,y,z2);
-		x1 = i0_x[i];
-		y = i0_y[i];
+		x1 = draw_x[i];
+		y = draw_y[i];
 		z1 = 0;
 		x2 = rot120x[i];
 		z2 = rot120z[i];
 		
 		glVertex3f(x2,y,z2);
 		glVertex3f(x1,y,z1);
-		glVertex3f(i0_x[i-1],i0_y[i-1],0);
+		glVertex3f(draw_x[i-1],draw_y[i-1],0);
 		glEnd();
 	}
 
 	i = 0;
-	x1 = i0_x[i];
-	y = i0_y[i];
+	x1 = draw_x[i];
+	y = draw_y[i];
 	z1 = 0;
 	GLfloat x3 = rot120x[i];
 	GLfloat z3 = rot120z[i];
-	for(i = 1; i <= num_i0_pts; i++){
+	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_LINE_STRIP);
 		
 		glVertex3f(x1,y,z1);
 		glVertex3f(x3,y,z3);
-		x1 = i0_x[i];
-		y = i0_y[i];
+		x1 = draw_x[i];
+		y = draw_y[i];
 		z1 = 0;
 		x2 = rot240x[i];
 		z2 = rot240z[i];
 		
 		glVertex3f(x3,y,z3);
 		glVertex3f(x1,y,z1);
-		glVertex3f(i0_x[i-1],i0_y[i-1],0);
+		glVertex3f(draw_x[i-1],draw_y[i-1],0);
 		glEnd();
 	}
 
 	i = 0;
 	x3 = rot240x[i];
-	y = i0_y[i];
+	y = draw_y[i];
 	z3 = rot240z[i];
 	x2 = rot120x[i];
 	z2 = rot120z[i];
-	for(i = 1; i <= num_i0_pts; i++){
+	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_LINE_STRIP);
 		
 		glVertex3f(x3,y,z3);
 		glVertex3f(x2,y,z2);
 		x3 = rot240x[i];
-		y = i0_y[i];
+		y = draw_y[i];
 		z3 = rot240z[i];
 		x2 = rot120x[i];
 		z2 = rot120z[i];
 		
 		glVertex3f(x2,y,z2);
 		glVertex3f(x3,y,z3);
-		glVertex3f(rot240x[i-1],i0_y[i-1],rot240z[i-1]);
+		glVertex3f(rot240x[i-1],draw_y[i-1],rot240z[i-1]);
 		glEnd();
 	}
 }
@@ -233,9 +233,9 @@ void drawSurfacePoints(void) {
 	GLfloat rot240x [MAX_POINT];
 	GLfloat rot240z [MAX_POINT];
 
-	for(int i = 0; i <= num_i0_pts; i++) {
-		rot120x[i] = -0.5f * i0_x[i];
-		rot120z[i] = .86603 * i0_x[i];
+	for(int i = 0; i <= num_draw_pts; i++) {
+		rot120x[i] = -0.5f * draw_x[i];
+		rot120z[i] = .86603 * draw_x[i];
 		rot240x[i] = rot120x[i];
 		rot240z[i] = rot120z[i] * -1;
 	}
@@ -244,27 +244,27 @@ void drawSurfacePoints(void) {
 	glPointSize(3.0f);
 	glBegin(GL_POINTS);
 	
-	for(int i = 0; i <= num_i0_pts; i++) {
+	for(int i = 0; i <= num_draw_pts; i++) {
 		//Conversion of ratios between input and output
-		int x = i0_x[i];
-		int y = i0_y[i];
+		int x = draw_x[i];
+		int y = draw_y[i];
 		//printf("(%d, %d) should be drawn\n", x, y);
 		glVertex3f(x, y, 0.0f);
 	}
 
-	for(int i = 0; i <= num_i0_pts; i++) {
+	for(int i = 0; i <= num_draw_pts; i++) {
 		//Conversion of ratios between input and output
 		int x = rot120x[i];
-		int y = i0_y[i];
+		int y = draw_y[i];
 		int z = rot120z[i];
 		//printf("(%d, %d) should be drawn\n", x, y);
 		glVertex3f(x, y, z);
 	}
 
-	for(int i = 0; i <= num_i0_pts; i++) {
+	for(int i = 0; i <= num_draw_pts; i++) {
 		//Conversion of ratios between input and output
 		int x = rot240x[i];
-		int y = i0_y[i];
+		int y = draw_y[i];
 		int z = rot240z[i];
 		//printf("(%d, %d) should be drawn\n", x, y);
 		glVertex3f(x, y, z);
