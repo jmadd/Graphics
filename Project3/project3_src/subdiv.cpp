@@ -67,6 +67,8 @@ void init() {
 	num_i0_pts = -1;
 	subdiv_v=0;
 	subdiv_h=0;
+	draw_x = (GLfloat *)malloc(MAX_POINT*10 * sizeof(GLfloat));
+	draw_y = (GLfloat *)malloc(MAX_POINT*10 * sizeof(GLfloat));
 }
 
 void display() {

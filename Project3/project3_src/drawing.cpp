@@ -58,11 +58,11 @@ void drawLines(void) {
 }
 
 void drawSurfaceSolid(void){
-	GLfloat rot120x [MAX_POINT];
-	GLfloat rot120z [MAX_POINT];
-	GLfloat rot240x [MAX_POINT];
-	GLfloat rot240z [MAX_POINT];
-
+	GLfloat* rot120x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot120z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot240x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot240z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	
 	for(int i = 0; i <= num_draw_pts; i++) {
 		rot120x[i] = -0.5f * draw_x[i];
 		rot120z[i] = .86603 * draw_x[i];
@@ -139,13 +139,18 @@ void drawSurfaceSolid(void){
 
 		glEnd();
 	}
+
+	free(rot120x);
+	free(rot120z);
+	free(rot240x);
+	free(rot240z);
 }
 
 void drawSurfaceWireframe(void){
-	GLfloat rot120x [MAX_POINT];
-	GLfloat rot120z [MAX_POINT];
-	GLfloat rot240x [MAX_POINT];
-	GLfloat rot240z [MAX_POINT];
+	GLfloat* rot120x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot120z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot240x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot240z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
 
 	for(int i = 0; i <= num_draw_pts; i++) {
 		rot120x[i] = -0.5f * draw_x[i];
@@ -223,15 +228,20 @@ void drawSurfaceWireframe(void){
 		glVertex3f(rot240x[i-1],draw_y[i-1],rot240z[i-1]);
 		glEnd();
 	}
+
+	free(rot120x);
+	free(rot120z);
+	free(rot240x);
+	free(rot240z);
 }
 
 void drawSurfacePoints(void) {
 	
 
-	GLfloat rot120x [MAX_POINT];
-	GLfloat rot120z [MAX_POINT];
-	GLfloat rot240x [MAX_POINT];
-	GLfloat rot240z [MAX_POINT];
+	GLfloat* rot120x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot120z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot240x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	GLfloat* rot240z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
 
 	for(int i = 0; i <= num_draw_pts; i++) {
 		rot120x[i] = -0.5f * draw_x[i];
@@ -271,5 +281,9 @@ void drawSurfacePoints(void) {
 	}
 
 	glEnd();
+	free(rot120x);
+	free(rot120z);
+	free(rot240x);
+	free(rot240z);
 }
 /* end of drawing.cpp */
