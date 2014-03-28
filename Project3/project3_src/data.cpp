@@ -25,6 +25,7 @@ int num_i0_pts;                 // The number of iteration 0 control points
 
 GLfloat *draw_x;     // Control points to be drawn, x
 GLfloat *draw_y;     // Control points to be drawn, y
+GLfloat *draw_z;
 int num_draw_pts;    // The number of control points to draw
 
 
@@ -97,7 +98,6 @@ GLfloat *mergePointsArrays(GLfloat *arr1, GLfloat *arr2, int size) {
 	for (int i = 0; i < size; i++) {
 		arr3[2 * i] = arr1[i];
 		arr3[(2 * i) + 1] = arr2[i];
-		printf("Merged %f %f\n", arr1[i],arr2[i]);
 	}
 
 	free(arr1);
@@ -123,9 +123,12 @@ void subdividePointsArray(int subdiv_level) {
 
 	/* ADD YOUR CODE HERE */
 	if (subdiv_level == 0) {
+		int n = num_i0_pts+1;
 		for(int i = 0; i <= num_i0_pts; i++) {
+			//0
 			draw_x[i] = i0_x[i];
 			draw_y[i] = i0_y[i];
+			draw_z[i] = 0;
 		}
 		num_draw_pts = num_i0_pts;
 		return;
@@ -168,6 +171,46 @@ void subdividePointsArray(int subdiv_level) {
 
 	
 	return;
+}
+
+void subdividePointsArrayH(int subdiv_level){
+	assert(subdiv_level >= 0);
+	subdividePointsArray(0);
+	/* ADD YOUR CODE HERE */
+	if (subdiv_level == 0) {
+		int n = num_draw_pts+1;
+		for(int i = 0; i <= num_draw_pts; i++) {
+			draw_x[i+n] = -0.5f * draw_x[i];
+			draw_z[i+n] = .86603 * draw_x[i];
+			draw_x[i+n*2] = draw_x[i+n];
+			draw_z[i+n*2] = draw_z[i+n] * -1;
+		}
+		
+		return;
+	}
+	subdividePointsArray(subdiv_level-1);
+
+	/*
+	IMPORTANT: ALWAYS APPLY VERTICAL SUBDIVISION FIRST OR THIS WONT WORK
+	So we are subdividing by stacks,
+	so stack 1 is indices: 0, n, n*2
+	where n is num_draw_pts+1
+	stack 2 is indices: 1, n+1, n*2+1
+	After the first subdivision, each stack should contain 3 more indices, and we should have 3 more slices
+	So stack 1 will be indices: 0, n, n*2, n*3, n*4, n*5
+	So draw_x,draw_y and draw_z in effect hold (num_draw_pts+1)*3*(2^subdiv_h) points
+	To index only one stack to make the first subdivision, you take i, i+n, i+2*n
+	But what about for future subdivisions?
+	Index i+j*n for all j < 3*(2^(subdiv_h-1))
+	Add those points into a new array representing the stack.
+	Apply subdivision to that array, and arrive with an old and new array
+	Change old values for the past index i+j*n, and add new ones in for i+j*n where 3*(2^(subdiv_h-1) < j < 3*(2^subdiv_h)
+	
+
+
+	*/
+
+
 }
 
 
