@@ -186,6 +186,50 @@ void subdividePointsArray(int subdiv_level) {
 	return;
 }
 
+void subdivideStack(GLfloat* stack_x, GLfloat* stack_y, GLfloat* stack_z, int stack_size){
+	GLfloat* old_x = makePointsArray(stack_size);
+	GLfloat* old_y = makePointsArray(stack_size);
+	GLfloat* old_z = makePointsArray(stack_size);
+	GLfloat* new_x = makePointsArray(stack_size);
+	GLfloat* new_y = makePointsArray(stack_size);
+	GLfloat* new_z = makePointsArray(stack_size);
+
+	for(int i = 1; i < stack_size-1; i++){
+		old_x[i] = .125f * (stack_x[i-1] + 6 * stack_x[i] + stack_x[i+1]);
+		old_y[i] = stack_y[i];
+		old_z[i] = .125f * (stack_z[i-1] + 6 * stack_z[i] + stack_z[i+1]);
+	}
+	old_x[0] = .125f * (stack_x[stack_size-1] + 6 * stack_x[0] + stack_x[1]);
+	old_y[0] = stack_y[0];
+	old_z[0] = .125f * (stack_z[stack_size-1] + 6 * stack_z[0] + stack_z[1]);
+
+	old_x[stack_size-1] = .125f * (stack_x[stack_size-2] + 6 * stack_x[stack_size-1] + stack_x[0]);
+	old_y[stack_size-1] = stack_y[stack_size-1];
+	old_z[stack_size-1] = .125f * (stack_z[stack_size-2] + 6 * stack_z[stack_size-1] + stack_z[0]);
+
+
+	for(int i = 0; i < stack_size-1; i++) {
+		new_x[i] = .125f * (4 * stack_x[i] + 4 * stack_x[i+1]);
+		new_y[i] = stack_y[i];
+		new_z[i] = .125f * (4 * stack_z[i] + 4 * stack_z[i+1]);
+	}
+	new_x[stack_size-1]= .125f * (4 * stack_x[0] + 4* stack_x[stack_size-1]);
+	new_y[stack_size-1] = stack_y[stack_size-1];
+	new_z[stack_size-1]= .125f * (4 * stack_z[0] + 4* stack_z[stack_size-1]);
+
+
+	new_x=mergePointsArrays(old_x,new_x,stack_size);
+	new_y=mergePointsArrays(old_y,new_y,stack_size);
+	new_z=mergePointsArrays(old_z,new_z,stack_size);
+
+	for(int i = 0; i < stack_size*2; i++){
+		stack_x[i]=new_x[i];
+		stack_y[i]=new_y[i];
+		stack_z[i]=new_z[i];
+	}
+
+}
+
 void subdividePointsArrayH(int subdiv_level){
 	assert(subdiv_level >= 0);
 	
@@ -206,7 +250,7 @@ void subdividePointsArrayH(int subdiv_level){
 		
 		return;
 	}
-	subdividePointsArray(subdiv_level-1);
+	subdividePointsArrayH(subdiv_level-1);
 
 	/*
 	IMPORTANT: ALWAYS APPLY VERTICAL SUBDIVISION FIRST OR THIS WONT WORK
@@ -224,8 +268,53 @@ void subdividePointsArrayH(int subdiv_level){
 	Apply subdivision to that array, and arrive with an old and new array
 	Change old values for the past index i+j*n, and add new ones in for i+j*n where 3*(2^(subdiv_h-1) < j < 3*(2^subdiv_h)
 	*/
+	GLfloat* new_x = (GLfloat *)malloc((num_draw_pts+1)* 3 * (int) pow(2.0f,subdiv_h) * sizeof(GLfloat));
+	GLfloat* new_y = (GLfloat *)malloc((num_draw_pts+1)* 3 * (int) pow(2.0f,subdiv_h) * sizeof(GLfloat));
+	GLfloat* new_z = (GLfloat *)malloc((num_draw_pts+1)* 3 * (int) pow(2.0f,subdiv_h) * sizeof(GLfloat));
+
+	for(int i = 0; i < n; i++){ //i indicates the stack index
 
 
+		int stack_size = (int)(3*pow(2.0f,subdiv_level-1));
+		/*
+			This loop creates the stack array
+		*/
+		GLfloat* stack_x = makePointsArray(stack_size*2);
+		GLfloat* stack_y = makePointsArray(stack_size*2);
+		GLfloat* stack_z = makePointsArray(stack_size*2);
+		for(int s = 0; s < stack_size; s++){ //s indicates the slice index
+			int index = i+s*n; //index for the vertex
+			stack_x[s]=draw_x[index];
+			stack_y[s]=draw_y[index];
+			stack_z[s]=draw_z[index];
+		}
+		//At this points, stack array should be created for x,y,z
+		/*
+			Next we need to perform subdivision on this array
+			Since it is a loop, we do not have to exclude the first and last vertices like in the vertical subdivision
+		*/
+		subdivideStack(stack_x,stack_y,stack_z,stack_size);
+
+		//Now stack_x,stack_y,stack_z contain the new stacks
+
+
+		for(int s = 0; s < stack_size*2; s++){ //s indicates the slice index
+			int index = i+s*n; //index for the vertex
+			new_x[index]=stack_x[s];
+			new_y[index]=stack_y[s];
+			new_z[index]=stack_z[s];
+		}
+
+
+	}
+
+	free(draw_x);
+	free(draw_y);
+	free(draw_z);
+
+	draw_x = new_x;
+	draw_y = new_y;
+	draw_z = new_z;
 }
 
 

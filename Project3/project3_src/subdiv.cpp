@@ -90,7 +90,7 @@ void display() {
 	glEnd();
 
 	if(num_i0_pts > -1){
-	subdividePointsArrayH(0);
+	subdividePointsArrayH(subdiv_h);
 
 	if(mode3d){
 		if(disp_points) {
@@ -124,8 +124,11 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 		case 'r':
 			disp_points = (disp_points) ? false: true;
 			break;
-		case 's':
+		case 'a':
 			subdiv_v++;
+			break;
+		case 'b':
+			subdiv_h++;
 			break;
 		case 'q':
 			endSubdiv(0);
