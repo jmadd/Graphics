@@ -61,76 +61,35 @@ void drawSurfaceSolid(void){
 	int n = num_draw_pts+1;
 
 	glColor3f(0.0f,0.0f,1.0f); //blue color
-	int i = 0;
-	GLfloat x1 = draw_x[i];
-	GLfloat y1 = draw_y[i];
-	GLfloat z1 = draw_z[i];
-	GLfloat x2 = draw_x[i+n];
-	GLfloat y2 = draw_y[i+n];
-	GLfloat z2 = draw_z[i+n];
-	for(i = 1; i <= num_draw_pts; i++){
-		glBegin(GL_POLYGON);
+	int k = ((int)(3*pow(2.0f,subdiv_h)) - 1);
+	for(int j = 0; j < (int)(3*pow(2.0f,subdiv_h)); j++){
 		
-		glVertex3f(x1,y1,z1);
-		glVertex3f(x2,y2,z2);
-		x1 = draw_x[i];
-		y1 = draw_y[i];
-		z1 = draw_z[i];
-		x2 = draw_x[i+n];
-		y2 = draw_y[i+n];
-		z2 = draw_z[i+n];
-		
-		glVertex3f(x2,y2,z2);
-		glVertex3f(x1,y2,z1);
-		glEnd();
-	}
+		for(int i = 1; i < n; i++){
+			glBegin(GL_POLYGON);
+			GLfloat x1 = draw_x[i+k*n-1];
+			GLfloat y1 = draw_y[i+k*n-1];
+			GLfloat z1 = draw_z[i+k*n-1];
+			
+			GLfloat x2 = draw_x[i+j*n-1];
+			GLfloat y2 = draw_y[i+j*n-1];
+			GLfloat z2 = draw_z[i+j*n-1];
 
-	i = 0;
-	x1 = draw_x[i];
-	y1 = draw_y[i];
-	z1 = draw_z[i];
-	GLfloat x3 = draw_x[i+n*2];
-	GLfloat y3 = draw_y[i+n*2];
-	GLfloat z3 = draw_z[i+n*2];
-	for(i = 1; i <= num_draw_pts; i++){
-		glBegin(GL_POLYGON);
-		
-		glVertex3f(x1,y1,z1);
-		glVertex3f(x3,y3,z3);
-		x1 = draw_x[i];
-		y1 = draw_y[i];
-		z1 = draw_z[i];
-		x3 = draw_x[i+n*2];
-		y3 = draw_y[i+n*2];
-		z3 = draw_z[i+n*2];
-		
-		glVertex3f(x3,y3,z3);
-		glVertex3f(x1,y1,z1);
-		glEnd();
-	}
+			GLfloat x3 = draw_x[i+j*n];
+			GLfloat y3 = draw_y[i+j*n];
+			GLfloat z3 = draw_z[i+j*n];
 
-	i = 0;
-	x3 = draw_x[i+n*2];
-	y3 = draw_y[i+n*2];
-	z3 = draw_z[i+n*2];
-	x2 = draw_x[i+n];
-	y2 = draw_y[i+n];
-	z2 = draw_z[i+n];
-	for(i = 1; i <= num_draw_pts; i++){
-		glBegin(GL_POLYGON);
+			GLfloat x4 = draw_x[i+k*n];
+			GLfloat y4 = draw_y[i+k*n];
+			GLfloat z4 = draw_z[i+k*n];
 		
-		glVertex3f(x3,y3,z3);
-		glVertex3f(x2,y2,z2);
-		x3 = draw_x[i+n*2];
-		y3 = draw_y[i+n*2];
-		z3 = draw_z[i+n*2];
-		x2 = draw_x[i+n];
-		y2 = draw_y[i+n];
-		z2 = draw_z[i+n];
-		
-		glVertex3f(x2,y2,z2);
-		glVertex3f(x3,y3,z3);
-		glEnd();
+			glVertex3f(x1,y1,z1);
+			glVertex3f(x2,y2,z2);
+			glVertex3f(x3,y3,z3);
+			glVertex3f(x4,y4,z4);
+
+			glEnd();
+		}
+		k=j;
 	}
 }
 
@@ -138,126 +97,55 @@ void drawSurfaceWireframe(void){
 	int n = num_draw_pts+1;
 
 	glColor3f(0.0f,0.0f,1.0f); //blue color
-	int i = 0;
-	GLfloat x1 = draw_x[i];
-	GLfloat y1 = draw_y[i];
-	GLfloat z1 = draw_z[i];
-	GLfloat x2 = draw_x[i+n];
-	GLfloat y2 = draw_y[i+n];
-	GLfloat z2 = draw_z[i+n];
-	for(i = 1; i <= num_draw_pts; i++){
-		glBegin(GL_LINE_STRIP);
+	int k = ((int)(3*pow(2.0f,subdiv_h)) - 1);
+	for(int j = 0; j < (int)(3*pow(2.0f,subdiv_h)); j++){
 		
-		glVertex3f(x1,y1,z1);
-		glVertex3f(x2,y2,z2);
-		x1 = draw_x[i];
-		y1 = draw_y[i];
-		z1 = draw_z[i];
-		x2 = draw_x[i+n];
-		y2 = draw_y[i+n];
-		z2 = draw_z[i+n];
+		for(int i = 1; i < n; i++){
+			glBegin(GL_LINE_STRIP);
+			GLfloat x1 = draw_x[i+k*n-1];
+			GLfloat y1 = draw_y[i+k*n-1];
+			GLfloat z1 = draw_z[i+k*n-1];
+			
+			GLfloat x2 = draw_x[i+j*n-1];
+			GLfloat y2 = draw_y[i+j*n-1];
+			GLfloat z2 = draw_z[i+j*n-1];
+
+			GLfloat x3 = draw_x[i+j*n];
+			GLfloat y3 = draw_y[i+j*n];
+			GLfloat z3 = draw_z[i+j*n];
+
+			GLfloat x4 = draw_x[i+k*n];
+			GLfloat y4 = draw_y[i+k*n];
+			GLfloat z4 = draw_z[i+k*n];
 		
-		glVertex3f(x2,y2,z2);
-		glVertex3f(x1,y2,z1);
-		glVertex3f(draw_x[i-1],draw_y[i-1],draw_z[i-1]);
-		glEnd();
+			glVertex3f(x1,y1,z1);
+			glVertex3f(x2,y2,z2);
+			glVertex3f(x3,y3,z3);
+			glVertex3f(x4,y4,z4);
+			glVertex3f(x1,y1,z1);
+			glEnd();
+		}
+		k=j;
 	}
 
-	i = 0;
-	x1 = draw_x[i];
-	y1 = draw_y[i];
-	z1 = draw_z[i];
-	GLfloat x3 = draw_x[i+n*2];
-	GLfloat y3 = draw_y[i+n*2];
-	GLfloat z3 = draw_z[i+n*2];
-	for(i = 1; i <= num_draw_pts; i++){
-		glBegin(GL_LINE_STRIP);
-		
-		glVertex3f(x1,y1,z1);
-		glVertex3f(x3,y3,z3);
-		x1 = draw_x[i];
-		y1 = draw_y[i];
-		z1 = draw_z[i];
-		x3 = draw_x[i+n*2];
-		y3 = draw_y[i+n*2];
-		z3 = draw_z[i+n*2];
-		
-		glVertex3f(x3,y3,z3);
-		glVertex3f(x1,y1,z1);
-		glVertex3f(draw_x[i-1],draw_y[i-1],draw_z[i-1]);
-		glEnd();
-	}
-
-	i = 0;
-	x3 = draw_x[i+n*2];
-	y3 = draw_y[i+n*2];
-	z3 = draw_z[i+n*2];
-	x2 = draw_x[i+n];
-	y2 = draw_y[i+n];
-	z2 = draw_z[i+n];
-	for(i = 1; i <= num_draw_pts; i++){
-		glBegin(GL_LINE_STRIP);
-		
-		glVertex3f(x3,y3,z3);
-		glVertex3f(x2,y2,z2);
-		x3 = draw_x[i+n*2];
-		y3 = draw_y[i+n*2];
-		z3 = draw_z[i+n*2];
-		x2 = draw_x[i+n];
-		y2 = draw_y[i+n];
-		z2 = draw_z[i+n];
-		
-		glVertex3f(x2,y2,z2);
-		glVertex3f(x3,y3,z3);
-		glVertex3f(draw_x[(i+n*2)-1],draw_y[(i+n*2)-1],draw_z[(i+n*2)-1]);
-		glEnd();
-	}
 }
 
 void drawSurfacePoints(void) {
 	int n = num_draw_pts+1;
 
 	glColor3f(0.0f,0.0f,1.0f); //blue color
-	int i = 0;
-	GLfloat x1 = draw_x[i];
-	GLfloat y1 = draw_y[i];
-	GLfloat z1 = draw_z[i];
-	GLfloat x2 = draw_x[i+n];
-	GLfloat y2 = draw_y[i+n];
-	GLfloat z2 = draw_z[i+n];
+	
 	glBegin(GL_POINTS);
-	for(i = 0; i <= num_draw_pts; i++){
+	for(int j = 0; j < (int)(3*pow(2.0f,subdiv_h)); j++){
+		for(int i = 0; i < n; i++){
 		
-		x2 = draw_x[i+n];
-		y2 = draw_y[i+n];
-		z2 = draw_z[i+n];
+			GLfloat x = draw_x[i+j*n];
+			GLfloat y = draw_y[i+j*n];
+			GLfloat z = draw_z[i+j*n];
 		
-		glVertex3f(x2,y2,z2);
+			glVertex3f(x,y,z);
 		
-	}
-
-	i = 0;
-	
-	for(i = 0; i <= num_draw_pts; i++){
-		
-		x1 = draw_x[i];
-		y1 = draw_y[i];
-		z1 = draw_z[i];
-		glVertex3f(x1,y1,z1);
-		
-	}
-
-	i = 0;
-	GLfloat x3 = draw_x[i+n*2];
-	GLfloat y3 = draw_y[i+n*2];
-	GLfloat z3 = draw_z[i+n*2];
-	for(i = 0; i <= num_draw_pts; i++){
-	
-		x3 = draw_x[i+n*2];
-		y3 = draw_y[i+n*2];
-		z3 = draw_z[i+n*2];
-		glVertex3f(x3,y3,z3);
-		
+		}
 	}
 	glEnd();
 }

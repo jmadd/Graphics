@@ -173,9 +173,9 @@ void subdividePointsArray(int subdiv_level) {
 	free(draw_x);
 	free(draw_y);
 	free(draw_z);
-	draw_x = (GLfloat *)malloc((num_draw_pts+1)*3 * sizeof(GLfloat));
-	draw_y = (GLfloat *)malloc((num_draw_pts+1)*3 * sizeof(GLfloat));
-	draw_z = (GLfloat *)malloc((num_draw_pts+1)*3 * sizeof(GLfloat));
+	draw_x = (GLfloat *)malloc((num_draw_pts+1)* 3 * (int) pow(2.0f,subdiv_h) * sizeof(GLfloat));
+	draw_y = (GLfloat *)malloc((num_draw_pts+1)* 3 * (int) pow(2.0f,subdiv_h) * sizeof(GLfloat));
+	draw_z = (GLfloat *)malloc((num_draw_pts+1)* 3 * (int) pow(2.0f,subdiv_h) * sizeof(GLfloat));
 	for(int i = 0; i <= num_draw_pts; i++){
 		draw_x[i]=new_draw_x[i];
 		draw_y[i]=new_draw_y[i];
@@ -223,9 +223,6 @@ void subdividePointsArrayH(int subdiv_level){
 	Add those points into a new array representing the stack.
 	Apply subdivision to that array, and arrive with an old and new array
 	Change old values for the past index i+j*n, and add new ones in for i+j*n where 3*(2^(subdiv_h-1) < j < 3*(2^subdiv_h)
-	
-
-
 	*/
 
 
