@@ -16,8 +16,10 @@
 #include <assert.h>
 
 #include "common.h"
+#include "mouse.h"
 #include "drawing.h"
 #include "data.h"
+
 
 /* GLOBAL VARAIBLES */
 /* (storage is actually allocated here) */
@@ -34,29 +36,46 @@ GLfloat ftop    =  40.0;
 GLfloat zNear   =  40.0;
 GLfloat zFar    = -40.0;
 
-bool mode3d = false;
-bool wireframe = false;
-bool disp_points = false;
+bool mode3d;
+bool wireframe;
+bool disp_points;
+GLfloat zoomFactor = 1.0; 
 
 /* local function declarations */
 void init(void);
 void display(void);
 void myKeyHandler(unsigned char ch, int x, int y);
-void myMouseButton(int button, int state, int x, int y);
+//void myMouseButton(int button, int state, int x, int y);
 void endSubdiv(int status);
 
 int main (int argc, char** argv) {
-  glutInit(&argc,argv);
-  glutInitWindowSize(W, H);
-  glutInitWindowPosition(X_OFF, Y_OFF);
-  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-  glutCreateWindow("subdiv");
-  init();
-  glutDisplayFunc(display);
-  glutKeyboardFunc(myKeyHandler);
-  glutMouseFunc(myMouseButton);
-  glutMainLoop();
-  return 0;
+	glutInit(&argc,argv);
+	glutInitWindowSize(W, H);
+	glutInitWindowPosition(X_OFF, Y_OFF);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutCreateWindow("subdiv");
+	init();
+	glutDisplayFunc(display);
+	glutKeyboardFunc(myKeyHandler);
+	glutMouseFunc(myMouseButton);
+	glutMotionFunc(myMouseMotion);
+	glutMainLoop();
+	return 0;
+}
+
+void changeViewMode(){
+	if(mode3d){
+		printf("perspective\n");
+		gluPerspective(2.5,(fright-fleft)/(ftop-fbottom),1,zNear-zFar);
+	    glTranslatef(
+	    0,
+	    -(ftop+fbottom)/2,
+	    (-zNear));
+	}
+	else {
+		glLoadIdentity();
+		glOrtho(fleft, fright, fbottom, ftop, -zNear, -zFar);
+	}
 }
 
 void init() {
@@ -67,6 +86,9 @@ void init() {
 	num_i0_pts = -1;
 	subdiv_v=0;
 	subdiv_h=0;
+	mode3d=false;
+	wireframe=false;
+	disp_points=false;
 	draw_x = (GLfloat *)malloc(MAX_POINT*10 * sizeof(GLfloat));
 	draw_y = (GLfloat *)malloc(MAX_POINT*10 * sizeof(GLfloat));
 	draw_z = (GLfloat *)malloc(MAX_POINT*10 * sizeof(GLfloat));
@@ -117,6 +139,7 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 	switch(ch) {
 		case 'z':
 			mode3d = (mode3d) ? false : true;
+			changeViewMode();
 			break;
 		case 'e':
 			wireframe = (wireframe) ? false: true;
@@ -143,35 +166,41 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 	return;
 }
 
-void myMouseButton(int button, int state, int x, int y) {
-	if (state == GLUT_DOWN && mode3d == false) {
-		if (button == GLUT_LEFT_BUTTON) {
-			// Add a point, if there is room
-			if(x >= 195 && x <= 205) {
-				x = 200;
-			}
+// void myMouseButton(int button, int state, int x, int y) {
+// 	if (state == GLUT_DOWN && mode3d == false) {
+// 		if (button == GLUT_LEFT_BUTTON) {
+// 			// Add a point, if there is room
+// 			if(x >= 195 && x <= 205) {
+// 				x = 200;
+// 			}
 
-			if(num_i0_pts < MAX_POINT && x >= 200) {
-				printf("Point %d added at x: %3d, y: %3d\n", num_i0_pts, x, y);
-				num_i0_pts++;
-				i0_x[num_i0_pts] = x/5 - 40;
-				i0_y[num_i0_pts] = (y/5 - 40) * -1;
-			}
-			else {
-				printf("No more points can be added.\n");
-			}
-		}
-		if (button == GLUT_RIGHT_BUTTON) {
-			if(num_i0_pts >= 0) {
-				printf("Point %d deleted\n", num_i0_pts);
-				i0_x[num_i0_pts] = 0;
-				i0_y[num_i0_pts] = 0;
-				num_i0_pts--;
-			}
-		}
-	}
-	glutPostRedisplay();
-}
+// 			if(num_i0_pts < MAX_POINT && x >= 200) {
+// 				printf("Point %d added at x: %3d, y: %3d\n", num_i0_pts, x, y);
+// 				num_i0_pts++;
+// 				i0_x[num_i0_pts] = x/5 - 40;
+// 				i0_y[num_i0_pts] = (y/5 - 40) * -1;
+// 			}
+// 			else {
+// 				printf("No more points can be added.\n");
+// 			}
+// 		}
+// 		if (button == GLUT_RIGHT_BUTTON) {
+// 			if(num_i0_pts >= 0) {
+// 				printf("Point %d deleted\n", num_i0_pts);
+// 				i0_x[num_i0_pts] = 0;
+// 				i0_y[num_i0_pts] = 0;
+// 				num_i0_pts--;
+// 			}
+// 		}
+// 	}
+
+// 	if(state == GLUT_DOWN && mode3d == true) {
+
+// 	}
+
+// 	glutPostRedisplay();
+// }
+
 
 void endSubdiv(int status) {
   printf("\nQuitting subdivision program.\n\n");

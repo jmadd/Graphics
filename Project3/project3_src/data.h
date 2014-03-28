@@ -15,6 +15,9 @@ extern GLfloat *draw_y;		// Control points to be drawn, y
 extern GLfloat *draw_z;
 extern int num_draw_pts;    // The number of control points to draw
 
+extern bool mode3d;
+extern bool wireframe;
+extern bool disp_points;
 
 /* Functions implemented in data.cpp */
 void subdividePointsArray(int subdiv_level);

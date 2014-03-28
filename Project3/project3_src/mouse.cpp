@@ -11,6 +11,9 @@
 #include "common.h"
 
 #include "mouse.h"
+#include "data.h"
+#include "drawing.h"
+#include <stdio.h>
 
 /* The frustum and zoom factor variables from canvas.c */
 extern GLfloat fleft;
@@ -28,8 +31,36 @@ int mouse_mode;
 int m_last_x, m_last_y;
 
 
+
 void myMouseButton(int button, int state, int x, int y) {
-	if (state == GLUT_DOWN) {
+	if (state == GLUT_DOWN && mode3d == false) {
+		if (button == GLUT_LEFT_BUTTON) {
+			// Add a point, if there is room
+			if(x >= 195 && x <= 205) {
+				x = 200;
+			}
+
+			if(num_i0_pts < MAX_POINT && x >= 200) {
+				printf("Point %d added at x: %3d, y: %3d\n", num_i0_pts, x, y);
+				num_i0_pts++;
+				i0_x[num_i0_pts] = x/5 - 40;
+				i0_y[num_i0_pts] = (y/5 - 40) * -1;
+			}
+			else {
+				printf("No more points can be added.\n");
+			}
+		}
+		if (button == GLUT_RIGHT_BUTTON) {
+			if(num_i0_pts >= 0) {
+				printf("Point %d deleted\n", num_i0_pts);
+				i0_x[num_i0_pts] = 0;
+				i0_y[num_i0_pts] = 0;
+				num_i0_pts--;
+			}
+		}
+	}
+
+	else if (state == GLUT_DOWN && mode3d == true) {
 		m_last_x = x;
 		m_last_y = y;
 
@@ -41,6 +72,8 @@ void myMouseButton(int button, int state, int x, int y) {
 			mouse_mode = MOUSE_ZOOM;
 		}
 	}
+
+	glutPostRedisplay();
 }
 
 void myMouseMotion(int x, int y) {
@@ -51,7 +84,7 @@ void myMouseMotion(int x, int y) {
 
 	m_last_x = x;
 	m_last_y = y;
-
+	if(mode3d==false)return;
 	if (mouse_mode == MOUSE_ROTATE_YX) {
 		/* scaling factors */
 		d_x /= 2.0;
