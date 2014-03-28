@@ -58,232 +58,207 @@ void drawLines(void) {
 }
 
 void drawSurfaceSolid(void){
-	GLfloat* rot120x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot120z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot240x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot240z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	
-	for(int i = 0; i <= num_draw_pts; i++) {
-		rot120x[i] = -0.5f * draw_x[i];
-		rot120z[i] = .86603 * draw_x[i];
-		rot240x[i] = rot120x[i];
-		rot240z[i] = rot120z[i] * -1;
-	}
+	int n = num_draw_pts+1;
 
 	glColor3f(0.0f,0.0f,1.0f); //blue color
 	int i = 0;
 	GLfloat x1 = draw_x[i];
-	GLfloat y = draw_y[i];
-	GLfloat z1 = 0;
-	GLfloat x2 = rot120x[i];
-	GLfloat z2 = rot120z[i];
+	GLfloat y1 = draw_y[i];
+	GLfloat z1 = draw_z[i];
+	GLfloat x2 = draw_x[i+n];
+	GLfloat y2 = draw_y[i+n];
+	GLfloat z2 = draw_z[i+n];
 	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_POLYGON);
 		
-		glVertex3f(x1,y,z1);
-		glVertex3f(x2,y,z2);
+		glVertex3f(x1,y1,z1);
+		glVertex3f(x2,y2,z2);
 		x1 = draw_x[i];
-		y = draw_y[i];
-		z1 = 0;
-		x2 = rot120x[i];
-		z2 = rot120z[i];
+		y1 = draw_y[i];
+		z1 = draw_z[i];
+		x2 = draw_x[i+n];
+		y2 = draw_y[i+n];
+		z2 = draw_z[i+n];
 		
-		glVertex3f(x2,y,z2);
-		glVertex3f(x1,y,z1);
-
+		glVertex3f(x2,y2,z2);
+		glVertex3f(x1,y2,z1);
 		glEnd();
 	}
 
 	i = 0;
 	x1 = draw_x[i];
-	y = draw_y[i];
-	z1 = 0;
-	GLfloat x3 = rot120x[i];
-	GLfloat z3 = rot120z[i];
+	y1 = draw_y[i];
+	z1 = draw_z[i];
+	GLfloat x3 = draw_x[i+n*2];
+	GLfloat y3 = draw_y[i+n*2];
+	GLfloat z3 = draw_z[i+n*2];
 	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_POLYGON);
 		
-		glVertex3f(x1,y,z1);
-		glVertex3f(x3,y,z3);
+		glVertex3f(x1,y1,z1);
+		glVertex3f(x3,y3,z3);
 		x1 = draw_x[i];
-		y = draw_y[i];
-		z1 = 0;
-		x2 = rot240x[i];
-		z2 = rot240z[i];
+		y1 = draw_y[i];
+		z1 = draw_z[i];
+		x3 = draw_x[i+n*2];
+		y3 = draw_y[i+n*2];
+		z3 = draw_z[i+n*2];
 		
-		glVertex3f(x3,y,z3);
-		glVertex3f(x1,y,z1);
-
+		glVertex3f(x3,y3,z3);
+		glVertex3f(x1,y1,z1);
 		glEnd();
 	}
 
 	i = 0;
-	x3 = rot240x[i];
-	y = draw_y[i];
-	z3 = rot240z[i];
-	x2 = rot120x[i];
-	z2 = rot120z[i];
+	x3 = draw_x[i+n*2];
+	y3 = draw_y[i+n*2];
+	z3 = draw_z[i+n*2];
+	x2 = draw_x[i+n];
+	y2 = draw_y[i+n];
+	z2 = draw_z[i+n];
 	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_POLYGON);
 		
-		glVertex3f(x3,y,z3);
-		glVertex3f(x2,y,z2);
-		x3 = rot240x[i];
-		y = draw_y[i];
-		z3 = rot240z[i];
-		x2 = rot120x[i];
-		z2 = rot120z[i];
+		glVertex3f(x3,y3,z3);
+		glVertex3f(x2,y2,z2);
+		x3 = draw_x[i+n*2];
+		y3 = draw_y[i+n*2];
+		z3 = draw_z[i+n*2];
+		x2 = draw_x[i+n];
+		y2 = draw_y[i+n];
+		z2 = draw_z[i+n];
 		
-		glVertex3f(x2,y,z2);
-		glVertex3f(x3,y,z3);
-
+		glVertex3f(x2,y2,z2);
+		glVertex3f(x3,y3,z3);
 		glEnd();
 	}
-
-	free(rot120x);
-	free(rot120z);
-	free(rot240x);
-	free(rot240z);
 }
 
 void drawSurfaceWireframe(void){
-	GLfloat* rot120x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot120z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot240x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot240z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-
-	for(int i = 0; i <= num_draw_pts; i++) {
-		rot120x[i] = -0.5f * draw_x[i];
-		rot120z[i] = .86603 * draw_x[i];
-		rot240x[i] = rot120x[i];
-		rot240z[i] = rot120z[i] * -1;
-	}
+	int n = num_draw_pts+1;
 
 	glColor3f(0.0f,0.0f,1.0f); //blue color
 	int i = 0;
 	GLfloat x1 = draw_x[i];
-	GLfloat y = draw_y[i];
-	GLfloat z1 = 0;
-	GLfloat x2 = rot120x[i];
-	GLfloat z2 = rot120z[i];
+	GLfloat y1 = draw_y[i];
+	GLfloat z1 = draw_z[i];
+	GLfloat x2 = draw_x[i+n];
+	GLfloat y2 = draw_y[i+n];
+	GLfloat z2 = draw_z[i+n];
 	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_LINE_STRIP);
 		
-		glVertex3f(x1,y,z1);
-		glVertex3f(x2,y,z2);
+		glVertex3f(x1,y1,z1);
+		glVertex3f(x2,y2,z2);
 		x1 = draw_x[i];
-		y = draw_y[i];
-		z1 = 0;
-		x2 = rot120x[i];
-		z2 = rot120z[i];
+		y1 = draw_y[i];
+		z1 = draw_z[i];
+		x2 = draw_x[i+n];
+		y2 = draw_y[i+n];
+		z2 = draw_z[i+n];
 		
-		glVertex3f(x2,y,z2);
-		glVertex3f(x1,y,z1);
-		glVertex3f(draw_x[i-1],draw_y[i-1],0);
+		glVertex3f(x2,y2,z2);
+		glVertex3f(x1,y2,z1);
+		glVertex3f(draw_x[i-1],draw_y[i-1],draw_z[i-1]);
 		glEnd();
 	}
 
 	i = 0;
 	x1 = draw_x[i];
-	y = draw_y[i];
-	z1 = 0;
-	GLfloat x3 = rot120x[i];
-	GLfloat z3 = rot120z[i];
+	y1 = draw_y[i];
+	z1 = draw_z[i];
+	GLfloat x3 = draw_x[i+n*2];
+	GLfloat y3 = draw_y[i+n*2];
+	GLfloat z3 = draw_z[i+n*2];
 	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_LINE_STRIP);
 		
-		glVertex3f(x1,y,z1);
-		glVertex3f(x3,y,z3);
+		glVertex3f(x1,y1,z1);
+		glVertex3f(x3,y3,z3);
 		x1 = draw_x[i];
-		y = draw_y[i];
-		z1 = 0;
-		x2 = rot240x[i];
-		z2 = rot240z[i];
+		y1 = draw_y[i];
+		z1 = draw_z[i];
+		x3 = draw_x[i+n*2];
+		y3 = draw_y[i+n*2];
+		z3 = draw_z[i+n*2];
 		
-		glVertex3f(x3,y,z3);
-		glVertex3f(x1,y,z1);
-		glVertex3f(draw_x[i-1],draw_y[i-1],0);
+		glVertex3f(x3,y3,z3);
+		glVertex3f(x1,y1,z1);
+		glVertex3f(draw_x[i-1],draw_y[i-1],draw_z[i-1]);
 		glEnd();
 	}
 
 	i = 0;
-	x3 = rot240x[i];
-	y = draw_y[i];
-	z3 = rot240z[i];
-	x2 = rot120x[i];
-	z2 = rot120z[i];
+	x3 = draw_x[i+n*2];
+	y3 = draw_y[i+n*2];
+	z3 = draw_z[i+n*2];
+	x2 = draw_x[i+n];
+	y2 = draw_y[i+n];
+	z2 = draw_z[i+n];
 	for(i = 1; i <= num_draw_pts; i++){
 		glBegin(GL_LINE_STRIP);
 		
-		glVertex3f(x3,y,z3);
-		glVertex3f(x2,y,z2);
-		x3 = rot240x[i];
-		y = draw_y[i];
-		z3 = rot240z[i];
-		x2 = rot120x[i];
-		z2 = rot120z[i];
+		glVertex3f(x3,y3,z3);
+		glVertex3f(x2,y2,z2);
+		x3 = draw_x[i+n*2];
+		y3 = draw_y[i+n*2];
+		z3 = draw_z[i+n*2];
+		x2 = draw_x[i+n];
+		y2 = draw_y[i+n];
+		z2 = draw_z[i+n];
 		
-		glVertex3f(x2,y,z2);
-		glVertex3f(x3,y,z3);
-		glVertex3f(rot240x[i-1],draw_y[i-1],rot240z[i-1]);
+		glVertex3f(x2,y2,z2);
+		glVertex3f(x3,y3,z3);
+		glVertex3f(draw_x[(i+n*2)-1],draw_y[(i+n*2)-1],draw_z[(i+n*2)-1]);
 		glEnd();
 	}
-
-	free(rot120x);
-	free(rot120z);
-	free(rot240x);
-	free(rot240z);
 }
 
 void drawSurfacePoints(void) {
-	
-
-	GLfloat* rot120x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot120z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot240x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	GLfloat* rot240z = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-
-	for(int i = 0; i <= num_draw_pts; i++) {
-		rot120x[i] = -0.5f * draw_x[i];
-		rot120z[i] = .86603 * draw_x[i];
-		rot240x[i] = rot120x[i];
-		rot240z[i] = rot120z[i] * -1;
-	}
+	int n = num_draw_pts+1;
 
 	glColor3f(0.0f,0.0f,1.0f); //blue color
-	glPointSize(3.0f);
+	int i = 0;
+	GLfloat x1 = draw_x[i];
+	GLfloat y1 = draw_y[i];
+	GLfloat z1 = draw_z[i];
+	GLfloat x2 = draw_x[i+n];
+	GLfloat y2 = draw_y[i+n];
+	GLfloat z2 = draw_z[i+n];
 	glBegin(GL_POINTS);
+	for(i = 0; i <= num_draw_pts; i++){
+		
+		x2 = draw_x[i+n];
+		y2 = draw_y[i+n];
+		z2 = draw_z[i+n];
+		
+		glVertex3f(x2,y2,z2);
+		
+	}
+
+	i = 0;
 	
-	for(int i = 0; i <= num_draw_pts; i++) {
-		//Conversion of ratios between input and output
-		int x = draw_x[i];
-		int y = draw_y[i];
-		//printf("(%d, %d) should be drawn\n", x, y);
-		glVertex3f(x, y, 0.0f);
+	for(i = 0; i <= num_draw_pts; i++){
+		
+		x1 = draw_x[i];
+		y1 = draw_y[i];
+		z1 = draw_z[i];
+		glVertex3f(x1,y1,z1);
+		
 	}
 
-	for(int i = 0; i <= num_draw_pts; i++) {
-		//Conversion of ratios between input and output
-		int x = rot120x[i];
-		int y = draw_y[i];
-		int z = rot120z[i];
-		//printf("(%d, %d) should be drawn\n", x, y);
-		glVertex3f(x, y, z);
+	i = 0;
+	GLfloat x3 = draw_x[i+n*2];
+	GLfloat y3 = draw_y[i+n*2];
+	GLfloat z3 = draw_z[i+n*2];
+	for(i = 0; i <= num_draw_pts; i++){
+	
+		x3 = draw_x[i+n*2];
+		y3 = draw_y[i+n*2];
+		z3 = draw_z[i+n*2];
+		glVertex3f(x3,y3,z3);
+		
 	}
-
-	for(int i = 0; i <= num_draw_pts; i++) {
-		//Conversion of ratios between input and output
-		int x = rot240x[i];
-		int y = draw_y[i];
-		int z = rot240z[i];
-		//printf("(%d, %d) should be drawn\n", x, y);
-		glVertex3f(x, y, z);
-	}
-
 	glEnd();
-	free(rot120x);
-	free(rot120z);
-	free(rot240x);
-	free(rot240z);
 }
 /* end of drawing.cpp */

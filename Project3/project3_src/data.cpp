@@ -18,6 +18,7 @@
 
 #include "common.h"
 #include "data.h"
+#include "drawing.h"
 
 GLfloat i0_x[MAX_POINT];    // Iteration 0 control points, x
 GLfloat i0_y[MAX_POINT];    // Iteration 0 control points, y
@@ -27,6 +28,7 @@ GLfloat *draw_x;     // Control points to be drawn, x
 GLfloat *draw_y;     // Control points to be drawn, y
 GLfloat *draw_z;
 int num_draw_pts;    // The number of control points to draw
+
 
 
 /**********************************************
@@ -106,6 +108,14 @@ GLfloat *mergePointsArrays(GLfloat *arr1, GLfloat *arr2, int size) {
 	return arr3;
 }
 
+void printArray(GLfloat* arr, int size){
+	printf("[ ");
+	for(int i = 0; i < size-1; i++){
+		printf("%f, ",arr[i]);
+	}
+	printf("%f]\n",arr[size-1]);
+}
+
 /*
  * Using the iteration 0 control points (which are stored in the global
  * arrays "i0_x" and "i0_y") and the argument subdivision level, sets
@@ -162,11 +172,14 @@ void subdividePointsArray(int subdiv_level) {
 	num_draw_pts = num_draw_pts * 2;
 	free(draw_x);
 	free(draw_y);
-	draw_x = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
-	draw_y = (GLfloat *)malloc((num_draw_pts+1) * sizeof(GLfloat));
+	free(draw_z);
+	draw_x = (GLfloat *)malloc((num_draw_pts+1)*3 * sizeof(GLfloat));
+	draw_y = (GLfloat *)malloc((num_draw_pts+1)*3 * sizeof(GLfloat));
+	draw_z = (GLfloat *)malloc((num_draw_pts+1)*3 * sizeof(GLfloat));
 	for(int i = 0; i <= num_draw_pts; i++){
 		draw_x[i]=new_draw_x[i];
 		draw_y[i]=new_draw_y[i];
+		draw_z[i]=0;
 	}
 
 	
@@ -175,14 +188,19 @@ void subdividePointsArray(int subdiv_level) {
 
 void subdividePointsArrayH(int subdiv_level){
 	assert(subdiv_level >= 0);
-	subdividePointsArray(0);
-	/* ADD YOUR CODE HERE */
+	
+	subdividePointsArray(subdiv_v);
+	int n = num_draw_pts+1;
+
 	if (subdiv_level == 0) {
-		int n = num_draw_pts+1;
+		
 		for(int i = 0; i <= num_draw_pts; i++) {
+			
 			draw_x[i+n] = -0.5f * draw_x[i];
+			draw_y[i+n] = draw_y[i];
 			draw_z[i+n] = .86603 * draw_x[i];
 			draw_x[i+n*2] = draw_x[i+n];
+			draw_y[i+n*2] = draw_y[i];
 			draw_z[i+n*2] = draw_z[i+n] * -1;
 		}
 		

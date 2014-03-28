@@ -90,7 +90,7 @@ void display() {
 	glEnd();
 
 	if(num_i0_pts > -1){
-	subdividePointsArray(subdiv_v);
+	subdividePointsArrayH(0);
 
 	if(mode3d){
 		if(disp_points) {
@@ -167,7 +167,7 @@ void myMouseButton(int button, int state, int x, int y) {
 			}
 		}
 	}
-	display();
+	glutPostRedisplay();
 }
 
 void endSubdiv(int status) {

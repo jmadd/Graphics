@@ -18,5 +18,6 @@ extern int num_draw_pts;    // The number of control points to draw
 
 /* Functions implemented in data.cpp */
 void subdividePointsArray(int subdiv_level);
+void subdividePointsArrayH(int subdiv_level);
 
 #endif	/* _DATA_H_ */
