@@ -11,5 +11,8 @@ void drawSurfaceSolid(void);
 void drawSurfaceWireframe(void);
 void drawPoints(void);
 void drawLines(void);
+GLfloat* crossProduct(GLfloat*, GLfloat*);
+GLfloat* subtractPoints(GLfloat*, GLfloat*);
+
 
 #endif	/* _DRAWING_H_ */
