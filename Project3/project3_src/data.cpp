@@ -318,6 +318,48 @@ void subdividePointsArrayH(int subdiv_level){
 }
 
 
+void createEnvironment(void){
+	int n = num_draw_pts+1;
+	int m = (int)(3*pow(2.0f,subdiv_h));
+	struct vertex* verts = new vertex[n];
+	for(int i = 0; i < n*m; i++){
+		verts[i].location = new GLfloat[3];
+		verts[i].normal = new GLfloat[3];
+		verts[i].color = new GLfloat[3];
+		verts[i].location[0] = draw_x[i];
+		verts[i].location[1] = draw_y[i];
+		verts[i].location[2] = draw_z[i];
+	}
+
+	//now we have a single array of vertices
+	
+	//next we need to take this array, and create an array of poly's made of four edges
+	
+
+	//glColor3f(0.0f,0.0f,1.0f); //blue color
+	int k = m - 1;
+	struct poly* polys = new poly[m*(n-1)];
+	for(int j = 0; j < m; j++){
+		for(int i = 1; i < n; i++){
+			polys[(i-1)+j*n].verts = new vertex[4];
+			polys[(i-1)+j*n].verts[0] = verts[i+k*n-1];
+			polys[(i-1)+j*n].verts[1] = verts[i+j*n-1];
+			polys[(i-1)+j*n].verts[2] = verts[i+j*n];
+			polys[(i-1)+j*n].verts[3] = verts[i+k*n];
+			polys[(i-1)+j*n].normal = crossProduct(subtractPoints(verts[i+k*n-1].location, verts[i+j*n-1].location), subtractPoints(verts[i+k*n-1].location, verts[i+j*n].location));
+			
+			
+			
+		}
+		k=j;
+	}
+
+	//at this point we have all the polygons and their normals in the polys array
+
+
+}
+
+
 /**********************************************
  * End Routines for Midpoint Subdivision 
  **********************************************/

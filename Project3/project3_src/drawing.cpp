@@ -117,7 +117,7 @@ void drawSurfaceSolid(void){
 			v4[2] = draw_z[i+k*n];
 
 			GLfloat* n1 = crossProduct(subtractPoints(v1, v2), subtractPoints(v1, v3));
-		
+			
 			glNormal3fv(n1);
 			glVertex3fv(v1);
 			glNormal3fv(n1);

@@ -19,8 +19,20 @@ extern bool mode3d;
 extern bool wireframe;
 extern bool disp_points;
 
+struct vertex {
+	GLfloat* location;
+	GLfloat* normal;
+	GLfloat* color;
+};
+
+struct poly{
+	vertex* verts;
+	GLfloat* normal;
+};
+
 /* Functions implemented in data.cpp */
 void subdividePointsArray(int subdiv_level);
 void subdividePointsArrayH(int subdiv_level);
+void createEnvironment(void);
 
 #endif	/* _DATA_H_ */

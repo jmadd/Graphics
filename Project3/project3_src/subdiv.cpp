@@ -39,6 +39,7 @@ GLfloat zFar    = -40.0;
 bool mode3d;
 bool wireframe;
 bool disp_points;
+bool subdiv_changed; // used to judge whether we need to calculate a new subdivision
 GLfloat zoomFactor = 1.0; 
 
 /* local function declarations */
@@ -114,17 +115,27 @@ void display() {
 	glEnd();
 
 	if(num_i0_pts > -1){
-	subdividePointsArrayH(subdiv_h);
+		if(subdiv_changed) {
+			subdividePointsArrayH(subdiv_h);
+			subdiv_changed=false;
+		}
+	
 
 	if(mode3d){
+		
 		if(disp_points) {
 			drawSurfacePoints();
 		}
 		else if(wireframe)
 			drawSurfaceWireframe();
-		else 
+		else {
+			createEnvironment();
 			drawSurfaceSolid();
+			
+		}
+
 	}else{
+		subdividePointsArrayH(subdiv_h);
 		drawPoints();
 		drawLines();
 	}	}
@@ -151,9 +162,11 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 			break;
 		case 'a':
 			subdiv_v++;
+			subdiv_changed=true;
 			break;
 		case 'b':
 			subdiv_h++;
+			subdiv_changed=true;
 			break;
 		case 'q':
 			endSubdiv(0);
