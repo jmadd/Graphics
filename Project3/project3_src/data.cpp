@@ -319,9 +319,11 @@ void subdividePointsArrayH(int subdiv_level){
 
 
 void createEnvironment(void){
+
+	printf("createEnvironment begin\n");
 	int n = num_draw_pts+1;
 	int m = (int)(3*pow(2.0f,subdiv_h));
-	struct vertex* verts = new vertex[n];
+	struct vertex* verts = new vertex[n*m];
 	for(int i = 0; i < n*m; i++){
 		verts[i].location = new GLfloat[3];
 		verts[i].normal = new GLfloat[3];
@@ -329,6 +331,7 @@ void createEnvironment(void){
 		verts[i].location[0] = draw_x[i];
 		verts[i].location[1] = draw_y[i];
 		verts[i].location[2] = draw_z[i];
+		
 	}
 
 	//now we have a single array of vertices
@@ -341,11 +344,11 @@ void createEnvironment(void){
 	struct poly* polys = new poly[m*(n-1)];
 	for(int j = 0; j < m; j++){
 		for(int i = 1; i < n; i++){
-			polys[(i-1)+j*n].verts = new vertex[4];
-			polys[(i-1)+j*n].verts[0] = verts[i+k*n-1];
-			polys[(i-1)+j*n].verts[1] = verts[i+j*n-1];
-			polys[(i-1)+j*n].verts[2] = verts[i+j*n];
-			polys[(i-1)+j*n].verts[3] = verts[i+k*n];
+			polys[(i-1)+j*n].verts = new GLuint[4];
+			polys[(i-1)+j*n].verts[0] = i+k*n-1;
+			polys[(i-1)+j*n].verts[1] = i+j*n-1;
+			polys[(i-1)+j*n].verts[2] = i+j*n;
+			polys[(i-1)+j*n].verts[3] = i+k*n;
 			polys[(i-1)+j*n].normal = crossProduct(subtractPoints(verts[i+k*n-1].location, verts[i+j*n-1].location), subtractPoints(verts[i+k*n-1].location, verts[i+j*n].location));
 			
 			
@@ -353,9 +356,31 @@ void createEnvironment(void){
 		}
 		k=j;
 	}
-
+	
+	int q = n-1;
+	int psl = (m-1);
 	//at this point we have all the polygons and their normals in the polys array
+	for(int sl = 0; sl < m; psl=sl++){
+		
+		for(int st = 1; st < k; st++){
+			int index1 = psl*q+st-1;
+			int index2 = psl*q+st;
+			int index3 = sl*q+st-1;
+			int index4 = sl*q+st;
 
+			struct poly* p1 = &polys[index1]; //upper right
+			struct poly* p2 = &polys[index2]; //bottom right
+			struct poly* p3 = &polys[index3]; //upper left
+			struct poly* p4 = &polys[index4]; //bottom left
+
+			GLfloat* normal = verts[p1->verts[3]].normal;
+			normal[0]=(p1->normal[0]+p2->normal[0]+p3->normal[0]+p4->normal[0])/4;
+			normal[1]=(p1->normal[1]+p2->normal[1]+p3->normal[1]+p4->normal[1])/4;
+			normal[2]=(p1->normal[2]+p2->normal[2]+p3->normal[2]+p4->normal[2])/4;
+
+			printf("#%d: <%f, %f, %f>\n", p1->verts[3],normal[0],normal[1],normal[2]);
+		}
+	}
 
 }
 

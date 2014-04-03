@@ -26,7 +26,7 @@ struct vertex {
 };
 
 struct poly{
-	vertex* verts;
+	GLuint* verts; //upper-left,upper-right,lower-right,lower-left
 	GLfloat* normal;
 };
 
