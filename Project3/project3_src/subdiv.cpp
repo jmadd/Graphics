@@ -115,12 +115,9 @@ void display() {
 	glEnd();
 
 	if(num_i0_pts > -1){
-		if(subdiv_changed) {
-			subdividePointsArrayH(subdiv_h);
-			subdiv_changed=false;
-		}
+		
 	
-
+		subdividePointsArrayH(subdiv_h);
 	if(mode3d){
 		
 		if(disp_points) {
@@ -135,7 +132,6 @@ void display() {
 		}
 
 	}else{
-		subdividePointsArrayH(subdiv_h);
 		drawPoints();
 		drawLines();
 	}	}

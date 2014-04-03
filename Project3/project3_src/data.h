@@ -15,6 +15,9 @@ extern GLfloat *draw_y;		// Control points to be drawn, y
 extern GLfloat *draw_z;
 extern int num_draw_pts;    // The number of control points to draw
 
+extern struct vertex* vertices;
+extern struct poly* polygons;
+
 extern bool mode3d;
 extern bool wireframe;
 extern bool disp_points;

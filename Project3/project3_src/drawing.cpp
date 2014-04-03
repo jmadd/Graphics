@@ -196,6 +196,11 @@ GLfloat* crossProduct(GLfloat* v1, GLfloat* v2) {
     result[0] = (v1[1]*v2[2])-(v2[1]*v1[2]);
     result[1] = -(v1[0]*v2[2])+(v2[0]*v1[2]);
     result[2] = (v1[0]*v2[1])-(v1[1]*v2[0]);
+    GLfloat r = result[0]*result[0]+result[1]*result[1]+result[2]*result[2];
+    r = sqrt(r);
+    result[0]/=r;
+    result[1]/=r;
+    result[2]/=r;
     return result;
 }
 

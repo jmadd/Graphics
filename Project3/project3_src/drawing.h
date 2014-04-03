@@ -13,6 +13,7 @@ void drawPoints(void);
 void drawLines(void);
 GLfloat* crossProduct(GLfloat*, GLfloat*);
 GLfloat* subtractPoints(GLfloat*, GLfloat*);
+GLfloat* normalize(GLfloat*);
 
 
 #endif	/* _DRAWING_H_ */
