@@ -5,7 +5,15 @@
  * for compiling, etc., if you did something besides the standard
  * Makefile.  Also, document any additional features in this file.
  *
- * Group Members:
+ * Group Members: Nick Crum (nrc523) Jared Maddox (jam7732)
  *
  */
+
+ Q1:
+
+
+
+
+ Q2:
+ Yes, vases can be made. Donuts can be made as well, but for them to be perfectly connected then the rendering would have to loop around from the last control point to the first so there isn't a seem.
 

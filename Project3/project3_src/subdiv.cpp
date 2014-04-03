@@ -148,7 +148,11 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 	switch(ch) {
 		case 'z':
 			mode3d = (mode3d) ? false : true;
-			changeViewMode();
+			if(!mode3d) {
+				glLoadIdentity();
+				glOrtho(fleft, fright, fbottom, ftop, -zNear, -zFar);
+			}
+			//changeViewMode();
 			break;
 		case 'e':
 			wireframe = (wireframe) ? false: true;

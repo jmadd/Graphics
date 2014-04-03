@@ -150,6 +150,8 @@ void drawSurfaceSolid(void){
 		}
 		k=j;
 	}
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
 }
 
 void drawSurfaceWireframe(void){
