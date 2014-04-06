@@ -333,65 +333,62 @@ void createEnvironment(void){
 		verts[i].location[0] = draw_x[i];
 		verts[i].location[1] = draw_y[i];
 		verts[i].location[2] = draw_z[i];
-		
-	}
-
-	//now we have a single array of vertices
-	
-	//next we need to take this array, and create an array of poly's made of four edges
-	
-
-	//glColor3f(0.0f,0.0f,1.0f); //blue color
-	int q = n-1;
-	int k = m - 1;
-	struct poly* polys = new poly[m*q];
-	for(int j = 0; j < m; j++){
-		for(int i = 0; i < q; i++){
-			polys[i+j*q].verts = new GLuint[4];
-			polys[i+j*q].verts[0] = i+k*q;
-			polys[i+j*q].verts[1] = i+j*q;
-			polys[i+j*q].verts[2] = i+j*q+1;
-			polys[i+j*q].verts[3] = i+k*q+1;
-			polys[i+j*q].normal = crossProduct(subtractPoints(verts[i+k*q].location, verts[i+j*q].location), subtractPoints(verts[i+k*q].location, verts[i+k*q+1].location));
-			
+		if(i % n == 0){
+			verts[i].normal[0]=0;
+			verts[i].normal[1]=1;
+			verts[i].normal[2]=0;
+			if(i!=0){
+				verts[i-1].normal[0]=0;
+				verts[i-1].normal[1]=-1;
+				verts[i-1].normal[2]=0;
+			}
 		}
-		k=j;
-	}
-
-
-	
-	int psl = m-1;
-	//at this point we have all the polygons and their normals in the polys array
-	for(int sl = 0; sl < m; psl=sl++){
 		
-		for(int st = 0; st < q-1; st++){
-			int index1 = psl*q+st;
-			int index2 = psl*q+st+1;
-			int index3 = sl*q+st;
-			int index4 = sl*q+st+1;
+	}
+	verts[n*m-1].normal[0]=0;
+	verts[n*m-1].normal[1]=-1;
+	verts[n*m-1].normal[2]=0;
 
-			struct poly* p1 = &polys[index1]; //upper right
-			struct poly* p2 = &polys[index2]; //bottom right
-			struct poly* p3 = &polys[index3]; //upper left
-			struct poly* p4 = &polys[index4]; //bottom left
-			GLfloat* normal = verts[p2->verts[0]].normal;
+	for(int j = 0; j < m; j++){
+		for(int i = 1; i < n-1; i++){
+			int top = j*n+i-1;
+			int mid = j*n+i;
+			int bot = j*n+i+1;
+			int l = ((j==0) ? m-1: j-1)*n+i;
+			int r = ((j==m-1) ? 0: j+1)*n+i;
 
-			normal[0]=(p1->normal[0]+p2->normal[0]+p3->normal[0]+p4->normal[0])/4;
-			normal[1]=(p1->normal[1]+p2->normal[1]+p3->normal[1]+p4->normal[1])/4;
-			normal[2]=(p1->normal[2]+p2->normal[2]+p3->normal[2]+p4->normal[2])/4;
+
+			GLfloat* up = subtractPoints(verts[top].location,verts[mid].location);
+
+			GLfloat* right = subtractPoints(verts[r].location,verts[mid].location);
+			GLfloat* down = subtractPoints(verts[bot].location,verts[mid].location);
+
+			GLfloat* left = subtractPoints(verts[l].location,verts[mid].location);
+
+			GLfloat* n1 = crossProduct(up,right);
+			GLfloat* n2 = crossProduct(right,down);
+			GLfloat* n3 = crossProduct(down,left);
+			GLfloat* n4 = crossProduct(left,up);
+
+			verts[mid].normal[0]=(n1[0]+n2[0]+n3[0]+n4[0])/4;
+			verts[mid].normal[1]=(n1[1]+n2[1]+n3[1]+n4[1])/4;
+			verts[mid].normal[2]=(n1[2]+n2[2]+n3[2]+n4[2])/4;
+
+			free(up);
+			free(right);
+			free(down);
+			free(left);
+			free(n1);
+			free(n2);
+			free(n3);
+			free(n4);
 
 		}
 	}
 
 	delete[] vertices;
-	delete[] polygons;
 	vertices=verts;
-	polygons=polys;
-
-	for(int i = 0; i < m*n; i++){
-		printf("V%d: <%f, %f, %f>, <%f, %f, %f>\n",i,vertices[i].location[0],vertices[i].location[1],vertices[i].location[2],
-												vertices[i].normal[0],vertices[i].normal[1],vertices[i].normal[2]);
-	}
+	
 }
 
 
