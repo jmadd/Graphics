@@ -10,10 +10,27 @@
  */
 
  Q1:
+Imagine you are given the following seven control points:
+             P0 = {  0,  0 }
+             P1 = {  2,  2 }
+             P2 = {  4, -1 }
+             P3 = {  7,  2 }
+             P4 = {  9,  1 }
+The five control points, in the order that they are given, define a curve C under a degree-four blend.  Assume that this curve is parameterized as C(t), where t is between  0 and 1.
 
+(a) Find the coordinates of C(0.8) using the parametric representation under Bernstein-Bezier basis. 
 
+P(0.8) = (.2^4) * (0,0) + 4(.2^3)(.8) * (2,2) + 6(.2^2)(.8)^2 * (4,-1) + 4(.2)(.8^3) * (7, 2) + (.8^4) * (9, 1)
+P(0.8) = (7.219, 1.126)
+
+(b) Briefly describe how C(0.8) would be determined if the de Castlejau algorithm was used instead.
+
+The value would be the same. The same equation can be used to determine the location of the point if the de Castlejau algorithm was used.
 
 
  Q2:
- Yes, vases can be made. Donuts can be made as well, but for them to be perfectly connected then the rendering would have to loop around from the last control point to the first so there isn't a seem.
+ Can you use the tool you developed in this project to create a smooth model for an object with one or more holes (like a donut),  or an open object like a vase? If yes, explain how the control points will be added and how your code will handle them. If not, describe what additional features/modifications need to be done.
+
+ Yes, vases can be made by forming something like a half-U. However, as the object is subdivided. Just like the outside edges, the hole of the vase goes from rigid to curvy as the object gets subdivided.
+ Donuts can be made as well by creating a circle that doesn't touch the middle line, but for them to be perfectly connected then the rendering would have to loop around from the last control point to the first so that there is no gap in the donut.
 

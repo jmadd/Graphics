@@ -35,8 +35,8 @@ void drawPoints(void) {
 	glBegin(GL_POINTS);
 	for(int i = 0; i <= num_draw_pts; i++) {
 		//Conversion of ratios between input and output
-		int x = draw_x[i];
-		int y = draw_y[i];
+		GLfloat x = draw_x[i];
+		GLfloat y = draw_y[i];
 		//printf("(%d, %d) should be drawn\n", x, y);
 		glVertex3f(x, y, 0.0f);
 	}
@@ -48,8 +48,8 @@ void drawLines(void) {
 	glBegin(GL_LINE_STRIP);
 	for(int i = 0; i <= num_draw_pts; i++) {
 		//Conversion of ratios between input and output
-		int x = draw_x[i];
-		int y = draw_y[i];
+		GLfloat x = draw_x[i];
+		GLfloat y = draw_y[i];
 		//printf("(%d, %d) should be drawn\n", x, y);
 		glVertex3f(x, y, 0.0f);
 	}
