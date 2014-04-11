@@ -23,6 +23,7 @@ extern GLfloat fbottom;
 extern GLfloat zNear;
 extern GLfloat zFar;
 extern GLfloat zoomFactor;
+bool add_points = true;
 
 /* The current mode the mouse is in, based on what button(s) is pressed */
 int mouse_mode;
@@ -39,15 +40,19 @@ void myMouseButton(int button, int state, int x, int y) {
 			if(x >= 195 && x <= 205) {
 				x = 200;
 			}
-
-			if(num_i0_pts < MAX_POINT && x >= 200) {
+			if(num_i0_pts < MAX_POINT && add_points && x >= 200) {
 				printf("Point %d added at x: %3d, y: %3d\n", num_i0_pts, x, y);
-				num_i0_pts++;
+				printf("%d\n", num_i0_pts);
+				if(num_i0_pts >= 29) add_points = false;
+				else num_i0_pts++;
 				i0_x[num_i0_pts] = x/5 - 40;
 				i0_y[num_i0_pts] = (y/5 - 40) * -1;
 			}
+			else if (x < 200) {
+				printf("Points must be entered to the right of the green line.\n");
+			}
 			else {
-				printf("No more points can be added.\n");
+				printf("No more points can be added. You have exceeded the maximum.\n");
 			}
 		}
 		if (button == GLUT_RIGHT_BUTTON) {

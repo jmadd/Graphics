@@ -4,7 +4,7 @@
  * Contains the drawing routines and related helper functions for the
  * subdivision surface
  *
- * Group Members: <FILL IN>
+ * Group Members: Nick Crum (nrc523) Jared Maddox (jam7732)
  */
 
 #ifdef _WIN32
@@ -92,63 +92,109 @@ void drawSurfaceSolid(void){
 	//glColor3f(0.0f,0.0f,1.0f); //blue color
 	int k = ((int)(3*pow(2.0f,subdiv_h)) - 1);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	for(int j = 0; j < (int)(3*pow(2.0f,subdiv_h)); j++){
-		for(int i = 1; i < n; i++){
-			glBegin(GL_POLYGON);
 
-			GLfloat* v1 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
-			v1[0] = draw_x[i+k*n-1];
-			v1[1] = draw_y[i+k*n-1];
-			v1[2] = draw_z[i+k*n-1];
-			
-			GLfloat* v2 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
-			v2[0] = draw_x[i+j*n-1];
-			v2[1] = draw_y[i+j*n-1];
-			v2[2] = draw_z[i+j*n-1];
+	if(gouraud) {
+		for(int j = 0; j < (int)(3*pow(2.0f,subdiv_h)); j++){
+			for(int i = 1; i < n; i++){
+				glBegin(GL_POLYGON);
 
-			GLfloat* v3 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
-			v3[0] = draw_x[i+j*n];
-			v3[1] = draw_y[i+j*n];
-			v3[2] = draw_z[i+j*n];
+				GLfloat* v1 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+				v1[0] = draw_x[i+k*n-1];
+				v1[1] = draw_y[i+k*n-1];
+				v1[2] = draw_z[i+k*n-1];
+				
+				GLfloat* v2 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+				v2[0] = draw_x[i+j*n-1];
+				v2[1] = draw_y[i+j*n-1];
+				v2[2] = draw_z[i+j*n-1];
 
-			GLfloat* v4 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
-			v4[0] = draw_x[i+k*n];
-			v4[1] = draw_y[i+k*n];
-			v4[2] = draw_z[i+k*n];
+				GLfloat* v3 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+				v3[0] = draw_x[i+j*n];
+				v3[1] = draw_y[i+j*n];
+				v3[2] = draw_z[i+j*n];
 
-			GLfloat* n1 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
-			n1[0] = vertices[i+k*n-1].normal[0];
-			n1[1] = vertices[i+k*n-1].normal[1];
-			n1[2] = vertices[i+k*n-1].normal[2];
+				GLfloat* v4 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+				v4[0] = draw_x[i+k*n];
+				v4[1] = draw_y[i+k*n];
+				v4[2] = draw_z[i+k*n];
 
-			GLfloat* n2 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
-			n2[0] = vertices[i+j*n-1].normal[0];
-			n2[1] = vertices[i+j*n-1].normal[1];
-			n2[2] = vertices[i+j*n-1].normal[2];
+				GLfloat* n1 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+				n1[0] = vertices[i+k*n-1].normal[0];
+				n1[1] = vertices[i+k*n-1].normal[1];
+				n1[2] = vertices[i+k*n-1].normal[2];
 
-			GLfloat* n3 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
-			n3[0] = vertices[i+j*n].normal[0];
-			n3[1] = vertices[i+j*n].normal[1];
-			n3[2] = vertices[i+j*n].normal[2];
+				GLfloat* n2 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+				n2[0] = vertices[i+j*n-1].normal[0];
+				n2[1] = vertices[i+j*n-1].normal[1];
+				n2[2] = vertices[i+j*n-1].normal[2];
 
-			GLfloat* n4 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
-			n4[0] = vertices[i+k*n].normal[0];
-			n4[1] = vertices[i+k*n].normal[1];
-			n4[2] = vertices[i+k*n].normal[2];
-			
-			glNormal3fv(n1);
-			glVertex3fv(v1);
-			glNormal3fv(n2);
-			glVertex3fv(v2);
-			glNormal3fv(n3);
-			glVertex3fv(v3);
-			glNormal3fv(n4);
-			glVertex3fv(v4);
+				GLfloat* n3 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+				n3[0] = vertices[i+j*n].normal[0];
+				n3[1] = vertices[i+j*n].normal[1];
+				n3[2] = vertices[i+j*n].normal[2];
 
-			glEnd();
-			glFlush();
+				GLfloat* n4 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+				n4[0] = vertices[i+k*n].normal[0];
+				n4[1] = vertices[i+k*n].normal[1];
+				n4[2] = vertices[i+k*n].normal[2];
+				
+				glNormal3fv(n1);
+				glVertex3fv(v1);
+				glNormal3fv(n2);
+				glVertex3fv(v2);
+				glNormal3fv(n3);
+				glVertex3fv(v3);
+				glNormal3fv(n4);
+				glVertex3fv(v4);
+
+				glEnd();
+				glFlush();
+			}
+			k=j;
 		}
-		k=j;
+	}
+
+	else {
+			for(int j = 0; j < (int)(3*pow(2.0f,subdiv_h)); j++){
+				for(int i = 1; i < n; i++){
+					glBegin(GL_POLYGON);
+
+					GLfloat* v1 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+					v1[0] = draw_x[i+k*n-1];
+					v1[1] = draw_y[i+k*n-1];
+					v1[2] = draw_z[i+k*n-1];
+
+					GLfloat* v2 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+					v2[0] = draw_x[i+j*n-1];
+					v2[1] = draw_y[i+j*n-1];
+					v2[2] = draw_z[i+j*n-1];
+
+					GLfloat* v3 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+					v3[0] = draw_x[i+j*n];
+					v3[1] = draw_y[i+j*n];
+					v3[2] = draw_z[i+j*n];
+
+					GLfloat* v4 = (GLfloat*)malloc(sizeof(GLfloat) * 3);
+					v4[0] = draw_x[i+k*n];
+					v4[1] = draw_y[i+k*n];
+					v4[2] = draw_z[i+k*n];
+
+					GLfloat* n1 = crossProduct(subtractPoints(v1, v2), subtractPoints(v1, v3));
+
+					glNormal3fv(n1);
+					glVertex3fv(v1);
+					glNormal3fv(n1);
+					glVertex3fv(v2);
+					glNormal3fv(n1);
+					glVertex3fv(v3);
+					glNormal3fv(n1);
+					glVertex3fv(v4);
+
+					glEnd();
+					glFlush();
+				}
+				k=j;
+			}
 	}
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);

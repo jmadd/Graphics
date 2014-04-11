@@ -4,7 +4,7 @@
  * Contains routines to help manage the data for the Midpoint Subdivision.
  * Starter code for Project 3.
  *
- * Group Members: <FILL IN>
+ * Group Members: Nick Crum (nrc523) Jared Maddox (jam7732)
  */
 
 #ifdef _WIN32
@@ -136,7 +136,6 @@ void subdividePointsArray(int subdiv_level) {
 
 	/* ADD YOUR CODE HERE */
 	if (subdiv_level == 0) {
-		int n = num_i0_pts+1;
 		for(int i = 0; i <= num_i0_pts; i++) {
 			//0
 			draw_x[i] = i0_x[i];

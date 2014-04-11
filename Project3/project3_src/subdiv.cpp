@@ -3,7 +3,7 @@
  * ----------
  * Contains function callbacks and bookkeeping for window management.
  *
- * Group Members: <FILL IN>
+ * Group Members: Nick Crum (nrc523) Jared Maddox (jam7732)
  */
 
 #ifdef _WIN32
@@ -39,6 +39,7 @@ GLfloat zFar    = -40.0;
 bool mode3d;
 bool wireframe;
 bool disp_points;
+bool gouraud = true;
 bool subdiv_changed; // used to judge whether we need to calculate a new subdivision
 GLfloat zoomFactor = 1.0; 
 
@@ -146,11 +147,15 @@ void display() {
 
 void myKeyHandler(unsigned char ch, int x, int y) {
 	switch(ch) {
+		case 'w':
 		case 'z':
-			mode3d = (mode3d) ? false : true;
-			if(!mode3d) {
-				glLoadIdentity();
-				glOrtho(fleft, fright, fbottom, ftop, -zNear, -zFar);
+			if(num_i0_pts < 4) printf("Please enter at least 5 control points.\n");
+			else {
+				mode3d = (mode3d) ? false : true;
+				if(!mode3d) {
+					glLoadIdentity();
+					glOrtho(fleft, fright, fbottom, ftop, -zNear, -zFar);
+				}
 			}
 			//changeViewMode();
 			break;
@@ -167,6 +172,9 @@ void myKeyHandler(unsigned char ch, int x, int y) {
 		case 'b':
 			subdiv_h++;
 			subdiv_changed=true;
+			break;
+		case 'd':
+			gouraud = (gouraud) ? false: true;
 			break;
 		case 'q':
 			endSubdiv(0);

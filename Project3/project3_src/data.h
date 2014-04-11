@@ -4,7 +4,7 @@
 /* Globals declared in data.cpp */
 
 // The maximum number of points allowed in the 4 Point Scheme
-#define MAX_POINT   90
+#define MAX_POINT   30
 
 extern GLfloat i0_x[MAX_POINT];	// Iteration 0 control points, x
 extern GLfloat i0_y[MAX_POINT];	// Iteration 0 control points, y
@@ -21,6 +21,7 @@ extern struct poly* polygons;
 extern bool mode3d;
 extern bool wireframe;
 extern bool disp_points;
+extern bool gouraud;
 
 struct vertex {
 	GLfloat* location;
