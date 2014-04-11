@@ -15,6 +15,35 @@
 #include "common.h"
 #include "raytrace.h"
 
+GLfloat clamp(GLfloat v, GLfloat l, GLfloat h){
+  return (v < l) ? l : ((v > h) ? h : v);
+}
+
+void subtractPoint(point* a, point* b, vector* r){
+  r->x = a->x-b->x;
+  r->y = a->y-b->y;
+  r->z = a->z-b->z;
+  r->w = a->w-b->w;
+}
+
+GLfloat dot(vector* a, vector* b){
+  return a->x*b->x + a->y*b->y + a->z*b->z;
+}
+
+GLfloat length(vector* a){
+  return sqrt(a->x*a->x+a->y*a->y+a->z*a->z);
+}
+
+GLfloat cosAngBetween(vector* a, vector* b){
+  return dot(a,b)/(length(a)*length(b));
+}
+
+void scaleVec(vector* a, GLfloat scl, vector* r){
+  r->x = a->x*scl;
+  r->y = a->y*scl;
+  r->z = a->z*scl;
+}
+
 point* makePoint(GLfloat x, GLfloat y, GLfloat z) {
   point* p;
   /* allocate memory */

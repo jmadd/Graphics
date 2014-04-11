@@ -77,7 +77,7 @@ void display() {
 
 void initScene () {
   s1 = makeSphere(0.0,0.0,-2.0,0.25);
-  s1->m = makeMaterial(1.0,0.1,0.15,0.3);
+  s1->m = makeMaterial(1.0,0.1,0.15,0.8);
 }
 
 void initCamera (int w, int h) {
@@ -94,6 +94,7 @@ void drawScene () {
   point direction; 
   ray r;
   color c;
+  light* l = makeLight(makePoint(-2,1,-0.5),1.0,1.0,1.0,0.8);
 
   /* initialize */
   worldPix.w = 1.0;
@@ -101,6 +102,7 @@ void drawScene () {
 
   r.start = &worldPix;
   r.dir= &direction;
+  r.l = l;
 
   imageWidth = 2*pnear*tan(fovx/2);
 
@@ -141,7 +143,7 @@ void traceRay(ray* r, color* c, int d) {
   firstHit(r,&p,&n,&m);
 
   if (p.w != 0.0) {
-    shade(&p,&n,m,r->dir,c,d);  /* do the lighting calculations */
+    shade(&p,&n,m,r->dir,c,r->l,viewpoint,d);  /* do the lighting calculations */
   } else {             /* nothing was hit */
     c->r = 0.0;
     c->g = 0.0;

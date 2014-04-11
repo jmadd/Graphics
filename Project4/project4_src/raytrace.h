@@ -24,10 +24,24 @@ typedef struct point {
 /* a vector is just a point */
 typedef point vector;
 
+/* a light has an origin, a color, and parameters for ambient, diffuse, and specular lighting */
+typedef struct light {
+  point* origin;
+
+  GLfloat r;
+  GLfloat g;
+  GLfloat b;
+
+  GLfloat amb;
+  GLfloat dif;
+  GLfloat spc;
+} light;
+
 /* a ray is a start point and a direction */
 typedef struct ray {
   point* start;
   vector* dir;
+  light* l;
 } ray;
 
 typedef struct material {
@@ -37,7 +51,11 @@ typedef struct material {
   GLfloat b; 
   /* ambient reflectivity */
   GLfloat amb;
+  GLfloat dif;
+  GLfloat spc;
 } material;
+
+
 
 typedef struct color {
   GLfloat r;
@@ -64,10 +82,17 @@ void calculateDirection(point*,point*,point*);
 void findPointOnRay(ray*,double,point*);
 int raySphereIntersect(ray*,sphere*,double*);
 void findSphereNormal(sphere*,point*,vector*);
+void subtractPoint(point*,point*,vector*);
+void scaleVec(vector*,GLfloat,vector*);
+GLfloat cosAngBetween(vector*,vector*);
+GLfloat dot(vector*,vector*);
+GLfloat length(vector*);
+GLfloat clamp(GLfloat,GLfloat,GLfloat);
 
 /* functions in light.cpp */
 material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat);
-void shade(point*,vector*,material*,vector*,color*,int);
+light* makeLight(point*,GLfloat,GLfloat,GLfloat,GLfloat);
+void shade(point*,vector*,material*,vector*,color*,light*,point*,int);
 
 /* global variables */
 extern int width;
