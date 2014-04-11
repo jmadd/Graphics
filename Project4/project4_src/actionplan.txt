@@ -1,0 +1,10 @@
+Action Plan Project 4
+
+1) Class/struct for point light source
+
+2) Class/struct for material properties
+
+3) Implement the illumination for basic objects
+	3a) separate parameters for ambient, diffuse, and specular components
+	3b) add another light source
+
