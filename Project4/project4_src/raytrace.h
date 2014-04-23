@@ -41,7 +41,7 @@ typedef struct light {
 typedef struct ray {
   point* start;
   vector* dir;
-  light* l;
+  light** ls;
 } ray;
 
 typedef struct material {
@@ -70,16 +70,26 @@ typedef struct sphere {
   material* m;
 } sphere;
 
+typedef struct triangle {
+  point* a;
+  point* b;
+  point* c;
+  material* m;
+} triangle;
+
 /* functions in raytrace.cpp */
 void traceRay(ray*, color*, int);
 
 /* functions in geometry.cpp */
 sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
+triangle* makeTriangle(point*,point*,point*);
 point* makePoint(GLfloat, GLfloat, GLfloat);
 point* copyPoint(point *);
 void freePoint(point *);
 void calculateDirection(point*,point*,point*);
 void findPointOnRay(ray*,double,point*);
+int rayTriangleIntersect(ray*,triangle*,double*);
+void findTriangleNormal(triangle*,vector*);
 int raySphereIntersect(ray*,sphere*,double*);
 void findSphereNormal(sphere*,point*,vector*);
 void subtractPoint(point*,point*,vector*);
@@ -90,9 +100,9 @@ GLfloat length(vector*);
 GLfloat clamp(GLfloat,GLfloat,GLfloat);
 
 /* functions in light.cpp */
-material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat);
-light* makeLight(point*,GLfloat,GLfloat,GLfloat,GLfloat);
-void shade(point*,vector*,material*,vector*,color*,light*,point*,int);
+material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+light* makeLight(point*,GLfloat,GLfloat,GLfloat,GLfloat, GLfloat, GLfloat);
+void shade(point*,vector*,material*,vector*,color*,light**, int, point*,int);
 
 /* global variables */
 extern int width;

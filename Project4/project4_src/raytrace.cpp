@@ -16,6 +16,10 @@
 #include "lowlevel.h"
 #include "raytrace.h"
 
+#define MAX_SPHERE 8
+#define MAX_TRIANGLE 8
+#define MAX_LIGHT 8
+
 /* local functions */
 void initScene(void);
 void initCamera (int, int);
@@ -28,7 +32,12 @@ void firstHit(ray*,point*,vector*,material**);
 /* local data */
 
 /* the scene: so far, just one sphere */
-sphere* s1;
+sphere** spheres;
+int numSpheres = 0;
+
+triangle** triangles;
+int numTriangles = 0;
+
 
 /* the viewing parameters: */
 point* viewpoint;
@@ -76,8 +85,21 @@ void display() {
 }
 
 void initScene () {
-  s1 = makeSphere(0.0,0.0,-2.0,0.25);
-  s1->m = makeMaterial(1.0,0.1,0.15,0.8);
+  spheres = new sphere*[MAX_SPHERE];
+  spheres[0] = makeSphere(-.5,0.0,-2.0,0.25);
+  spheres[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9);
+  numSpheres++;
+  spheres[1] = makeSphere(.5,0.0,-2.0,0.25);
+  spheres[1]->m = makeMaterial(0.1,1.0,0.15,0.5, 0.9, 0.9);
+  numSpheres++;
+  spheres[2] = makeSphere(0.0,0.0,-4.0,0.25);
+  spheres[2]->m = makeMaterial(0.15,1.0,1.0,0.5, 0.9, 0.9);
+  numSpheres++;
+
+  triangles = new triangle*[MAX_TRIANGLE];
+  triangles[0] = makeTriangle(makePoint(-.25,0,-1.0),makePoint(0,0.25,-2.0),makePoint(0.25,0.0,-2.0));
+  triangles[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9);
+  numTriangles++; 
 }
 
 void initCamera (int w, int h) {
@@ -94,7 +116,9 @@ void drawScene () {
   point direction; 
   ray r;
   color c;
-  light* l = makeLight(makePoint(-2,1,-0.5),1.0,1.0,1.0,0.8);
+  light** ls = new light*[2];
+  ls[0] = makeLight(makePoint(0,0,0),1.0,1.0,1.0,0.5, 0.5, 0.5);
+  ls[1] = makeLight(makePoint(2,1.5,-0.5),1.0,1.0,1.0,0.5, 0.5, 0.5);
 
   /* initialize */
   worldPix.w = 1.0;
@@ -102,7 +126,7 @@ void drawScene () {
 
   r.start = &worldPix;
   r.dir= &direction;
-  r.l = l;
+  r.ls = ls;
 
   imageWidth = 2*pnear*tan(fovx/2);
 
@@ -143,7 +167,7 @@ void traceRay(ray* r, color* c, int d) {
   firstHit(r,&p,&n,&m);
 
   if (p.w != 0.0) {
-    shade(&p,&n,m,r->dir,c,r->l,viewpoint,d);  /* do the lighting calculations */
+    shade(&p,&n,m,r->dir,c,r->ls,2, viewpoint,d);  /* do the lighting calculations */
   } else {             /* nothing was hit */
     c->r = 0.0;
     c->g = 0.0;
@@ -158,15 +182,36 @@ void traceRay(ray* r, color* c, int d) {
 void firstHit(ray* r, point* p, vector* n, material* *m) {
   double t = 0;     /* parameter value at first hit */
   int hit = FALSE;
+  int i = 0;
   
-  hit = raySphereIntersect(r,s1,&t);
-  if (hit) {
-    *m = s1->m;
-    findPointOnRay(r,t,p);
-    findSphereNormal(s1,p,n);
-  } else {
-    /* indicates no hit */
-    p->w = 0.0;
+  while(!hit && i < numSpheres){
+    hit = raySphereIntersect(r,spheres[i],&t);
+    if (hit) {
+      *m = spheres[i]->m;
+      findPointOnRay(r,t,p);
+      findSphereNormal(spheres[i],p,n);
+    } else {
+      //indicates no hit 
+      p->w = 0.0;
+    }
+    i++;
+  }
+
+  i=0;
+  while(!hit && i < numTriangles){
+    hit = rayTriangleIntersect(r,triangles[i],&t);
+    if (hit) {
+      // printf("It's a hit!");
+
+      *m = triangles[i]->m;
+      findPointOnRay(r,t,p);
+      //printf("%f\n",t);
+      findTriangleNormal(triangles[i],n);
+    } else {
+      /* indicates no hit */
+      p->w = 0.0;
+    }
+    i++;
   }
 
 }

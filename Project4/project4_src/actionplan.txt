@@ -1,12 +1,12 @@
 Action Plan Project 4
 
-1) Class/struct for point light source (including ambient, diffuse, specular, color, intensity)
+ X 1) Class/struct for point light source (including ambient, diffuse, specular, color, intensity)
 
-2) Class/struct for material properties (color, ambient, diffuse, specular)
+ X 2) Class/struct for material properties (color, ambient, diffuse, specular)
 
 http://www.cse.ohio-state.edu/~parent/classes/581/Lectures/12.IlluminationHandout.pdf
 
-3) Implement the illumination for basic objects
+ X 3) Implement the illumination for basic objects
 	3a) separate parameters for ambient, diffuse, and specular components
 	3b) add another light source
 
@@ -17,6 +17,7 @@ http://www.cse.ohio-state.edu/~parent/classes/581/Lectures/12.IlluminationHandou
 	5a) triangle
 	5b) infinite plane
 	5c) two more object types
+
 
 6) Define a ray class/struct (origin, direction, light source, depth)
 

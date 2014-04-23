@@ -38,6 +38,12 @@ GLfloat cosAngBetween(vector* a, vector* b){
   return dot(a,b)/(length(a)*length(b));
 }
 
+void crossProduct(vector* a, vector* b, vector* r){
+  r->x = a->y*b->z - a->z*b->y;
+  r->y = a->z*b->x - a->x*b->z;
+  r->z = a->x*b->y - a->y*b->x;
+}
+
 void scaleVec(vector* a, GLfloat scl, vector* r){
   r->x = a->x*scl;
   r->y = a->y*scl;
@@ -88,6 +94,7 @@ void calculateDirection(point* p, point* q, point* v) {
 /* given a vector, sets its contents to unit length */
 void normalize(vector* v) {
 	/* PUT YOUR CODE HERE */
+  scaleVec(v,1/length(v),v);
 }
 
 /* point on ray r parameterized by t is returned in p */
@@ -96,6 +103,71 @@ void findPointOnRay(ray* r,double t,point* p) {
   p->y = r->start->y + t * r->dir->y;
   p->z = r->start->z + t * r->dir->z;
   p->w = 1.0;
+}
+
+/* TRIANGLES */
+
+triangle* makeTriangle(point* a, point* b, point* c){
+  triangle* t;
+
+  t = (triangle*) malloc(sizeof(triangle));
+
+  t->a=a;
+  t->b=b;
+  t->c=c;
+  t->m = NULL;
+  return t;
+}
+
+int rayTriangleIntersect(ray* r, triangle* tri, double* t){
+  
+  vector* n = makePoint(0,0,0);
+  GLfloat d;
+  GLfloat tmp;
+  findTriangleNormal(tri,n);
+  d=dot(n,tri->a);
+  tmp=(d-dot(n,r->start))/dot(n,r->dir);
+  point* q = makePoint(0,0,0);
+  findPointOnRay(r,tmp,q);
+
+  vector* v1 = makePoint(0,0,0);
+  vector* v2 = makePoint(0,0,0);
+  vector* cross = makePoint(0,0,0);
+  subtractPoint(tri->b,tri->a,v1);
+  subtractPoint(q,tri->a,v2);
+  crossProduct(v1,v2,cross);
+  if(dot(cross,n)<0){
+    return false;
+  }
+
+  subtractPoint(tri->c,tri->b,v1);
+  subtractPoint(q,tri->b,v2);
+  crossProduct(v1,v2,cross);
+  if(dot(cross,n)<0){
+    return false;
+  }
+
+  subtractPoint(tri->a,tri->c,v1);
+  subtractPoint(q,tri->c,v2);
+  crossProduct(v1,v2,cross);
+  if(dot(cross,n)<0){
+    return false;
+  }
+
+  *t = tmp;
+  if(tmp < 0)return false;
+  return true;
+  
+
+}
+
+void findTriangleNormal(triangle* tri, vector* n){
+  vector* v1 = makePoint(0,0,0);
+  vector* v2 = makePoint(0,0,0);
+  subtractPoint(tri->b,tri->a,v1);
+  subtractPoint(tri->c,tri->a,v2);
+  crossProduct(v1,v2,n);
+  scaleVec(n,1/length(n),n);
 }
 
 
