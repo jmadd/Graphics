@@ -97,8 +97,8 @@ void initScene () {
   numSpheres++;
 
   triangles = new triangle*[MAX_TRIANGLE];
-  triangles[0] = makeTriangle(makePoint(-.25,0,-1.0),makePoint(0,0.25,-2.0),makePoint(0.5,0.0,-3.0));
-  triangles[0]->m = makeMaterial(0.7,1.0,0.1,0.5, 0.6, 0.9);
+  triangles[0] = makeTriangle(makePoint(-.25,-.15,-1.0),makePoint(0,0.25,-2.0),makePoint(0.5,0.0,-3.0));
+  triangles[0]->m = makeMaterial(0.1,0.35,0.20,0.5, 1.0, 1.0);
   numTriangles++; 
 }
 
@@ -117,8 +117,8 @@ void drawScene () {
   ray r;
   color c;
   light** ls = new light*[2];
-  ls[0] = makeLight(makePoint(0,0,0),1.0,1.0,1.0,0.5, 0.5, 0.5);
-  ls[1] = makeLight(makePoint(2,1.5,-0.5),1.0,1.0,1.0,0.5, 0.5, 0.5);
+  ls[0] = makeLight(makePoint(0.0,0.5,-1.5),1.0,1.0,1.0,0.5, 0.5, 0.5);
+  ls[1] = makeLight(makePoint(0.5,2.0,-1.0),1.0,1.0,1.0,0.5, 0.5, 0.5);
 
   /* initialize */
   worldPix.w = 1.0;
@@ -212,6 +212,9 @@ void firstHit(ray* r, point* p, vector* n, material* *m) {
 		*m = triangles[i]->m;
 		findPointOnRay(r,T,p);
 		findTriangleNormal(triangles[i],n);
+		if(dot(n,r->dir) > 0){
+			scaleVec(n,-1,n);   //fixed lighting for triangle
+		}
 		//printVector(p);
 	  }
     } else if(t == 1.0e8){

@@ -98,6 +98,7 @@ void scaleVec(vector*,GLfloat,vector*);
 GLfloat cosAngBetween(vector*,vector*);
 GLfloat dot(vector*,vector*);
 GLfloat length(vector*);
+void normalize(vector*);
 GLfloat clamp(GLfloat,GLfloat,GLfloat);
 
 /* functions in light.cpp */
