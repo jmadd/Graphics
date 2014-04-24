@@ -85,6 +85,7 @@ sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
 triangle* makeTriangle(point*,point*,point*);
 point* makePoint(GLfloat, GLfloat, GLfloat);
 point* copyPoint(point *);
+void printVector(vector*);
 void freePoint(point *);
 void calculateDirection(point*,point*,point*);
 void findPointOnRay(ray*,double,point*);

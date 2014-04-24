@@ -97,8 +97,8 @@ void initScene () {
   numSpheres++;
 
   triangles = new triangle*[MAX_TRIANGLE];
-  triangles[0] = makeTriangle(makePoint(-.25,0,-1.0),makePoint(0,0.25,-2.0),makePoint(0.25,0.0,-2.0));
-  triangles[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9);
+  triangles[0] = makeTriangle(makePoint(-.25,0,-1.0),makePoint(0,0.25,-2.0),makePoint(0.5,0.0,-3.0));
+  triangles[0]->m = makeMaterial(0.7,1.0,0.1,0.5, 0.6, 0.9);
   numTriangles++; 
 }
 
@@ -181,37 +181,45 @@ void traceRay(ray* r, color* c, int d) {
    material m. If no hit, returns an infinite point (p->w = 0.0) */
 void firstHit(ray* r, point* p, vector* n, material* *m) {
   double t = 0;     /* parameter value at first hit */
+  double T = 1.0e8;
   int hit = FALSE;
   int i = 0;
   
-  while(!hit && i < numSpheres){
+  
+  while(i < numSpheres){
     hit = raySphereIntersect(r,spheres[i],&t);
     if (hit) {
-      *m = spheres[i]->m;
-      findPointOnRay(r,t,p);
-      findSphereNormal(spheres[i],p,n);
-    } else {
+	  if(t <= T){
+		T=t;
+		*m = spheres[i]->m;
+		findPointOnRay(r,T,p);
+		findSphereNormal(spheres[i],p,n);
+	  }
+    } else if(t == 1.0e8){
       //indicates no hit 
       p->w = 0.0;
     }
     i++;
+	hit=FALSE;
   }
 
   i=0;
-  while(!hit && i < numTriangles){
+  while(i < numTriangles){
     hit = rayTriangleIntersect(r,triangles[i],&t);
     if (hit) {
-      // printf("It's a hit!");
-
-      *m = triangles[i]->m;
-      findPointOnRay(r,t,p);
-      //printf("%f\n",t);
-      findTriangleNormal(triangles[i],n);
-    } else {
+	  if(t <= T){
+		T=t;
+		*m = triangles[i]->m;
+		findPointOnRay(r,T,p);
+		findTriangleNormal(triangles[i],n);
+		//printVector(p);
+	  }
+    } else if(t == 1.0e8){
       /* indicates no hit */
       p->w = 0.0;
     }
     i++;
+	hit=FALSE;
   }
 
 }

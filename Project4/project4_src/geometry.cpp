@@ -50,6 +50,10 @@ void scaleVec(vector* a, GLfloat scl, vector* r){
   r->z = a->z*scl;
 }
 
+void printVector(vector* a){
+	printf("<%f, %f, %f>\n", a->x,a->y,a->z);
+}
+
 point* makePoint(GLfloat x, GLfloat y, GLfloat z) {
   point* p;
   /* allocate memory */

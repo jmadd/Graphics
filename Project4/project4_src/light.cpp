@@ -65,9 +65,9 @@ void shade(point* p, vector* n, material* m, vector* in, color* c, light** ls, i
     //calculate diffuse light
     vector* L = makePoint(0,0,0);
     subtractPoint(l->origin,p,L);
-    dif += m->dif * l->dif * clamp(cosAngBetween(L,n), 0, 1);
-
-
+	GLfloat cosAng = cosAngBetween(L,n);
+    dif += m->dif * l->dif * clamp(cosAng, 0, 1);
+	
 
     //calculate specular light
     vector* D = makePoint(0,0,0);
