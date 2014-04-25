@@ -19,6 +19,7 @@
 #define MAX_SPHERE 8
 #define MAX_TRIANGLE 8
 #define MAX_LIGHT 8
+#define MAX_PLANE 8
 
 /* local functions */
 void initScene(void);
@@ -37,6 +38,11 @@ int numSpheres = 0;
 
 triangle** triangles;
 int numTriangles = 0;
+
+plane** planes;
+int numPlanes = 0;
+
+int max_depth = 1;
 
 
 /* the viewing parameters: */
@@ -96,10 +102,15 @@ void initScene () {
   spheres[2]->m = makeMaterial(0.15,1.0,1.0,0.5, 0.9, 0.9);
   numSpheres++;
 
-  triangles = new triangle*[MAX_TRIANGLE];
-  triangles[0] = makeTriangle(makePoint(-.25,-.15,-1.0),makePoint(0,0.25,-2.0),makePoint(0.5,0.0,-3.0));
-  triangles[0]->m = makeMaterial(0.1,0.35,0.20,0.5, 1.0, 1.0);
-  numTriangles++; 
+  // triangles = new triangle*[MAX_TRIANGLE];
+  // triangles[0] = makeTriangle(makePoint(-.25,-.15,-1.0),makePoint(0,0.25,-2.0),makePoint(0.5,0.0,-3.0));
+  // triangles[0]->m = makeMaterial(0.1,0.35,0.20,0.5, 1.0, 1.0);
+  // numTriangles++; 
+
+  // planes = new plane*[MAX_PLANE];
+  // planes[0] = makePlane(makePoint(1, .3, .25), makePoint(0, 0, -2));
+  // planes[0]->m = makeMaterial(0.1,0.35,0.20,0.5, 1.0, 1.0);
+  // numPlanes++;
 }
 
 void initCamera (int w, int h) {
@@ -149,7 +160,10 @@ void drawScene () {
       calculateDirection(viewpoint,&worldPix,&direction);
 
       /* trace the ray! */
-      traceRay(&r,&c,0);
+      c.r=0;
+      c.g=0;
+      c.b=0;
+      traceRay(&r,&c,1,0);
       /* write the pixel! */
       drawPixel(i,j,c.r,c.g,c.b);
     }
@@ -158,7 +172,13 @@ void drawScene () {
 
 /* returns the color seen by ray r in parameter c */
 /* d is the recursive depth */
-void traceRay(ray* r, color* c, int d) {
+void traceRay(ray* r, color* c, GLfloat weight, int d) {
+  if(d > max_depth){
+    c->r=0.0;
+    c->g=0.0;
+    c->b=0.0;
+    return;
+  }
   point p;  /* first intersection point */
   vector n;
   material* m;
@@ -167,12 +187,25 @@ void traceRay(ray* r, color* c, int d) {
   firstHit(r,&p,&n,&m);
 
   if (p.w != 0.0) {
-    shade(&p,&n,m,r->dir,c,r->ls,2, viewpoint,d);  /* do the lighting calculations */
+    
+    shade(&p,&n,m,r,r->dir,c,r->ls,2, viewpoint,weight,d);  /* do the lighting calculations */
   } else {             /* nothing was hit */
     c->r = 0.0;
     c->g = 0.0;
     c->b = 0.0;
   }
+}
+
+void calculateReflection(ray* r, vector* n, point* p, ray* reflect){
+  reflect->ls = r->ls;
+  reflect->start = makePoint(0,0,0);
+  scaleVec(p,1,reflect->start);
+  vector* dir = makePoint(0,0,0);
+  vector* tmp = makePoint(0,0,0);
+  scaleVec(n,2*dot(r->dir,n),tmp);
+  subtractPoint(r->dir,tmp,dir);
+
+  reflect->dir=dir;
 }
 
 /* firstHit */
@@ -224,6 +257,29 @@ void firstHit(ray* r, point* p, vector* n, material* *m) {
     i++;
 	hit=FALSE;
   }
+
+
+  i=0;
+  while(i < numPlanes){
+    hit = rayPlaneIntersect(r,planes[i],&t);
+    if (hit) {
+    if(t <= T){
+    T=t;
+    *m = planes[i]->m;
+    findPointOnRay(r,T,p);
+    scaleVec(planes[i]->normal, 1, n);  //store normal values in n
+    if(dot(n,r->dir) > 0){
+      scaleVec(n,-1,n);   //fixed lighting for triangle
+    }
+    //printVector(p);
+    }
+    } else if(t == 1.0e8){
+      /* indicates no hit */
+      p->w = 0.0;
+    }
+    i++;
+  hit=FALSE;
+  }  
 
 }
 

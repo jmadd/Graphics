@@ -10,19 +10,19 @@ http://www.cse.ohio-state.edu/~parent/classes/581/Lectures/12.IlluminationHandou
 	3a) separate parameters for ambient, diffuse, and specular components
 	3b) add another light source
 
-4) Define sphere objects (create a class defining a sphere, based on quads)
+X 4) Define sphere objects (create a class defining a sphere, based on quads)
 	4a) code to find first intersection of a ray with a sphere
 
-5) Define two more object types (triangles and infinite planes)
-	5a) triangle
-	5b) infinite plane
+	5) Define two more object types (triangles and infinite planes)
+X	5a) triangle
+X	5b) infinite plane
 	5c) two more object types
 
 
-6) Define a ray class/struct (origin, direction, light source, depth)
+X	6) Define a ray class/struct (origin, direction, light source, depth)
 
-7) Find first intersection of a ray with an object in the scene (a method)
+X	7) Find first intersection of a ray with an object in the scene (a method)
 	-iterate through objects and find which point it intersects one first
 	7a) Generate reflected ray based on that intersection
 
-8) implement recursive ray tracing
+	8) implement recursive ray tracing

@@ -174,6 +174,33 @@ void findTriangleNormal(triangle* tri, vector* n){
   scaleVec(n,1/length(n),n);
 }
 
+/* PLANES */
+
+plane* makePlane(vector* normal, point* pt) {
+  plane* p;
+  p = (plane*) malloc(sizeof(plane));
+  p->normal = normal;
+  normalize(p->normal);
+  p->p = pt;
+  p->m = NULL;
+  return p; 
+}
+
+int rayPlaneIntersect(ray* r, plane* p, double* t){
+  
+  GLfloat d;
+  GLfloat tmp;
+  d=dot(p->normal,p->p);
+  tmp=(d-dot(p->normal,r->start))/dot(p->normal,r->dir);
+  point* q = makePoint(0,0,0);
+  findPointOnRay(r,tmp,q);
+
+  *t = tmp;
+  if(tmp < 0)return false;
+  return true;
+  
+
+}
 
 /* SPHERES */
 
