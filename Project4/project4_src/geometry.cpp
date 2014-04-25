@@ -176,7 +176,7 @@ void findTriangleNormal(triangle* tri, vector* n){
 
 /* PLANES */
 
-plane* makePlane(vector* normal, point* pt) {
+plane* makePlane(point* pt, vector* normal) {
   plane* p;
   p = (plane*) malloc(sizeof(plane));
   p->normal = normal;

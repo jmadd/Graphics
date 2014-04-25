@@ -51,7 +51,7 @@ light* makeLight(point* origin, GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GL
 /* shade */
 /* color of point p with normal vector n and material m returned in c */
 /* in is the direction of the incoming ray and d is the recusive depth */
-void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light** ls, int numLights, point* vp, GLfloat weight, int d) {
+void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light** ls, int numLights, point* vp, GLfloat weight, int d,void* last) {
 
   GLfloat amb=0;
   GLfloat dif=0;
@@ -60,6 +60,9 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   c->r=0;
   c->g=0;
   c->b=0;
+  rc.r=0;
+  rc.g=0;
+  rc.b=0;
 
   for(int i = 0; i < numLights; i++){
     light* l = ls[i];
@@ -89,16 +92,16 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
     spc += m->spc * l->spc * pow(clamp(cosAngBetween(R,V),0.0,1.0),8);
   }
 
-  GLfloat krg = 1.0;
+  
   /* so far, just finds ambient component of color */
   c->r = (amb+dif+spc) * m->r;
   c->g = (amb+dif+spc) * m->g;
   c->b = (amb+dif+spc) * m->b;
 
-  ray* reflect;
-  reflect = (ray*) malloc(sizeof(ray));
-  calculateReflection(r,n,p,reflect);
-  traceRay(reflect,&rc,krg*weight,d+1);
+  GLfloat krg = 1.0;
+  ray reflect;
+  calculateReflection(r,n,p,&reflect);
+  traceRay(&reflect,&rc,krg*weight,d+1,p->shape);
 
   c->r += krg*rc.r;
   c->g += krg*rc.g;

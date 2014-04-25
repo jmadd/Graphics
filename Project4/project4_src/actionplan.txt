@@ -23,6 +23,6 @@ X	6) Define a ray class/struct (origin, direction, light source, depth)
 
 X	7) Find first intersection of a ray with an object in the scene (a method)
 	-iterate through objects and find which point it intersects one first
-	7a) Generate reflected ray based on that intersection
+X	7a) Generate reflected ray based on that intersection
 
-	8) implement recursive ray tracing
+X	8) implement recursive ray tracing
