@@ -94,23 +94,23 @@ void display() {
 void initScene () {
   spheres = new sphere*[MAX_SPHERE];
   spheres[0] = makeSphere(-.5,0.0,-2.0,0.25);
-  spheres[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9);
+  spheres[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9,0.05);
   numSpheres++;
   spheres[1] = makeSphere(.5,0.0,-2.0,0.25);
-  spheres[1]->m = makeMaterial(0.1,1.0,0.15,0.5, 0.9, 0.9);
+  spheres[1]->m = makeMaterial(0.1,1.0,0.15,0.5, 0.9, 0.9,1.0);
   numSpheres++;
   spheres[2] = makeSphere(0.0,0.0,-6.0,0.25);
-  spheres[2]->m = makeMaterial(0.15,0.0,1.0,0.5, 0.9, 0.9);
+  spheres[2]->m = makeMaterial(0.15,0.0,1.0,0.5, 0.9, 0.9,0.5);
   numSpheres++;
 
   triangles = new triangle*[MAX_TRIANGLE];
   triangles[0] = makeTriangle(makePoint(-0.25,0.2,-3.0),makePoint(0,0.2,-3.0),makePoint(-0.25,0.3,-2.0));
-  triangles[0]->m = makeMaterial(1.0,0.35,0.20,0.5, 1.0, 1.0);
+  triangles[0]->m = makeMaterial(1.0,0.35,0.20,0.5, 1.0, 1.0,0.4);
   numTriangles++; 
 
   planes = new plane*[MAX_PLANE];
   planes[0] = makePlane(makePoint(0, 0, -12), makePoint(0, 0, 5));
-  planes[0]->m = makeMaterial(0.1,0.35,0.20,0.5, 1.0, 1.0);
+  planes[0]->m = makeMaterial(0.1,0.35,0.20,0.5, 1.0, 1.0,0.25);
   numPlanes++;
 }
 

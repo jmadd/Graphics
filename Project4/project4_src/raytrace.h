@@ -54,6 +54,7 @@ typedef struct material {
   GLfloat amb;
   GLfloat dif;
   GLfloat spc;
+  GLfloat krg;
 } material;
 
 
@@ -112,7 +113,7 @@ void normalize(vector*);
 GLfloat clamp(GLfloat,GLfloat,GLfloat);
 
 /* functions in light.cpp */
-material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat,GLfloat);
 light* makeLight(point*,GLfloat,GLfloat,GLfloat,GLfloat, GLfloat, GLfloat);
 void shade(point*,vector*,material*,ray*,vector*,color*,light**, int, point*,GLfloat,int,void*);
 

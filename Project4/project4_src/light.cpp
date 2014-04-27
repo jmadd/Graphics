@@ -15,7 +15,7 @@
 #include "common.h"
 #include "raytrace.h"
 
-material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif, GLfloat spc) {
+material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif, GLfloat spc, GLfloat krg) {
   material* m;
   
   /* allocate memory */
@@ -27,6 +27,7 @@ material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif
   m->amb = amb;
   m->dif = dif;
   m->spc = spc;
+  m->krg = krg;
   return(m);
 }
 
@@ -98,7 +99,7 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   c->g = (amb+dif+spc) * m->g;
   c->b = (amb+dif+spc) * m->b;
 
-  GLfloat krg = 1.0;
+  GLfloat krg = m->krg;
   ray reflect;
   calculateReflection(r,n,p,&reflect);
   traceRay(&reflect,&rc,krg*weight,d+1,p->shape);
