@@ -30,8 +30,12 @@ GLfloat dot(vector* a, vector* b){
   return a->x*b->x + a->y*b->y + a->z*b->z;
 }
 
+GLfloat lengthSq(vector* a){
+  return a->x*a->x+a->y*a->y+a->z*a->z;
+}
+
 GLfloat length(vector* a){
-  return sqrt(a->x*a->x+a->y*a->y+a->z*a->z);
+  return sqrt(lengthSq(a));
 }
 
 GLfloat cosAngBetween(vector* a, vector* b){

@@ -86,7 +86,7 @@ typedef struct plane {
 }plane;
 
 /* functions in raytrace.cpp */
-void traceRay(ray*, color*, GLfloat, int,void*);
+void traceRay(ray*, color*,  int,void*);
 void calculateReflection(ray*,vector*,point*,ray*);
 
 /* functions in geometry.cpp */
@@ -109,13 +109,14 @@ void scaleVec(vector*,GLfloat,vector*);
 GLfloat cosAngBetween(vector*,vector*);
 GLfloat dot(vector*,vector*);
 GLfloat length(vector*);
+GLfloat lengthSq(vector*);
 void normalize(vector*);
 GLfloat clamp(GLfloat,GLfloat,GLfloat);
 
 /* functions in light.cpp */
 material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat,GLfloat);
 light* makeLight(point*,GLfloat,GLfloat,GLfloat,GLfloat, GLfloat, GLfloat);
-void shade(point*,vector*,material*,ray*,vector*,color*,light**, int, point*,GLfloat,int,void*);
+void shade(point*,vector*,material*,ray*,vector*,color*,light**, int, point*,int,void*);
 
 /* global variables */
 extern int width;

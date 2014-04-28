@@ -93,8 +93,8 @@ void display() {
 
 void initScene () {
   spheres = new sphere*[MAX_SPHERE];
-  spheres[0] = makeSphere(-.5,0.0,-2.0,0.25);
-  spheres[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9,0.05);
+  spheres[0] = makeSphere(-.5,0.0,-3.0,0.25);
+  spheres[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9,0.5);
   numSpheres++;
   spheres[1] = makeSphere(.5,0.0,-2.0,0.25);
   spheres[1]->m = makeMaterial(0.1,1.0,0.15,0.5, 0.9, 0.9,1.0);
@@ -109,8 +109,8 @@ void initScene () {
   numTriangles++; 
 
   planes = new plane*[MAX_PLANE];
-  planes[0] = makePlane(makePoint(0, 0, -12), makePoint(0, 0, 5));
-  planes[0]->m = makeMaterial(0.1,0.35,0.20,0.5, 1.0, 1.0,0.25);
+  planes[0] = makePlane(makePoint(0, 0, -6.5), makePoint(0, 0, 1));
+  planes[0]->m = makeMaterial(0.8,0.8,0.8,0.15, .35, .4,1.0);
   numPlanes++;
 }
 
@@ -164,7 +164,7 @@ void drawScene () {
       c.r=0;
       c.g=0;
       c.b=0;
-      traceRay(&r,&c,1,0,NULL);
+      traceRay(&r,&c,0,NULL);
       /* write the pixel! */
       drawPixel(i,j,c.r,c.g,c.b);
     }
@@ -174,7 +174,7 @@ void drawScene () {
 
 /* returns the color seen by ray r in parameter c */
 /* d is the recursive depth */
-void traceRay(ray* r, color* c, GLfloat weight, int d, void* last) {
+void traceRay(ray* r, color* c, int d, void* last) {
   if(d > max_depth){
     c->r=0.0;
     c->g=0.0;
@@ -191,7 +191,7 @@ void traceRay(ray* r, color* c, GLfloat weight, int d, void* last) {
 
   if (p.w != 0.0) {
     
-    shade(&p,&n,m,r,r->dir,c,r->ls,2, viewpoint,weight,d,last);  /* do the lighting calculations */
+    shade(&p,&n,m,r,r->dir,c,r->ls,2, viewpoint,d,last);  /* do the lighting calculations */
   } else {             /* nothing was hit */
     c->r = 0.0;
     c->g = 0.0;
@@ -246,11 +246,11 @@ void firstHit(ray* r, point* p, vector* n, material* *m,void**last) {
   i=0;
   while(i < numTriangles){
     hit = rayTriangleIntersect(r,triangles[i],&t);
-    if (hit && ((spheres+i)!=*last)) {
+    if (hit && ((triangles+i)!=*last)) {
   	  if(t <= T){
     		T=t;
     		*m = triangles[i]->m;
-        p->shape = spheres + i;
+        p->shape = triangles + i;
     		findPointOnRay(r,T,p);
     		findTriangleNormal(triangles[i],n);
     		if(dot(n,r->dir) > 0){
@@ -270,11 +270,11 @@ void firstHit(ray* r, point* p, vector* n, material* *m,void**last) {
   i=0;
   while(i < numPlanes){
     hit = rayPlaneIntersect(r,planes[i],&t);
-    if (hit && ((spheres+i)!=*last)) {
+    if (hit && ((planes+i)!=*last)) {
     if(t <= T){
     T=t;
     *m = planes[i]->m;
-    p->shape = spheres + i;
+    p->shape = planes + i;
     findPointOnRay(r,T,p);
     scaleVec(planes[i]->normal, 1, n);  //store normal values in n
     if(dot(n,r->dir) > 0){
