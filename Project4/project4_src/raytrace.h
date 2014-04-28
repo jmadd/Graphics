@@ -55,6 +55,8 @@ typedef struct material {
   GLfloat dif;
   GLfloat spc;
   GLfloat krg;
+  GLfloat ktg;
+  GLfloat refN;
 } material;
 
 
@@ -119,7 +121,7 @@ bool checkHit(ray*,void**);
 
 
 /* functions in light.cpp */
-material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat,GLfloat);
+material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat,GLfloat,GLfloat,GLfloat);
 light* makeLight(point*,GLfloat,GLfloat,GLfloat,GLfloat, GLfloat, GLfloat);
 void shade(point*,vector*,material*,ray*,vector*,color*,light**, int, point*,int,void*);
 

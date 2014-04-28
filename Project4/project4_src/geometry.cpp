@@ -151,7 +151,13 @@ int rayTriangleIntersect(ray* r, triangle* tri, double* t){
   subtractPoint(tri->b,tri->a,v1);
   subtractPoint(q,tri->a,v2);
   crossProduct(v1,v2,cross);
+  
   if(dot(cross,n)<0){
+	freePoint(cross);
+	freePoint(q);
+	freePoint(n);
+	freePoint(v1);
+  freePoint(v2);
     return false;
   }
 
@@ -159,6 +165,11 @@ int rayTriangleIntersect(ray* r, triangle* tri, double* t){
   subtractPoint(q,tri->b,v2);
   crossProduct(v1,v2,cross);
   if(dot(cross,n)<0){
+	freePoint(cross);
+	freePoint(q);
+	freePoint(n);
+	freePoint(v1);
+  freePoint(v2);
     return false;
   }
 
@@ -166,10 +177,20 @@ int rayTriangleIntersect(ray* r, triangle* tri, double* t){
   subtractPoint(q,tri->c,v2);
   crossProduct(v1,v2,cross);
   if(dot(cross,n)<0){
+	freePoint(cross);
+	freePoint(q);
+	freePoint(n);
+	freePoint(v1);
+  freePoint(v2);
     return false;
   }
 
   *t = tmp;
+  freePoint(cross);
+  freePoint(q);
+  freePoint(n);
+  freePoint(v1);
+  freePoint(v2);
   if(tmp < 0)return false;
   return true;
   
@@ -183,6 +204,8 @@ void findTriangleNormal(triangle* tri, vector* n){
   subtractPoint(tri->c,tri->a,v2);
   crossProduct(v1,v2,n);
   scaleVec(n,1/length(n),n);
+  freePoint(v1);
+  freePoint(v2);
 }
 
 /* PLANES */
@@ -203,9 +226,7 @@ int rayPlaneIntersect(ray* r, plane* p, double* t){
   GLfloat tmp;
   d=dot(p->normal,p->p);
   tmp=(d-dot(p->normal,r->start))/dot(p->normal,r->dir);
-  point* q = makePoint(0,0,0);
-  findPointOnRay(r,tmp,q);
-
+ 
   *t = tmp;
   if(tmp < 0)return false;
   return true;

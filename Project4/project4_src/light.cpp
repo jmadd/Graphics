@@ -15,7 +15,7 @@
 #include "common.h"
 #include "raytrace.h"
 
-material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif, GLfloat spc, GLfloat krg) {
+material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif, GLfloat spc, GLfloat krg, GLfloat ktg, GLfloat refN) {
   material* m;
   
   /* allocate memory */
@@ -28,6 +28,8 @@ material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif
   m->dif = dif;
   m->spc = spc;
   m->krg = krg;
+  m->ktg = ktg;
+  m->refN = refN;
   return(m);
 }
 
@@ -65,6 +67,9 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   rc.r=0;
   rc.g=0;
   rc.b=0;
+  tc.r=0;
+  tc.g=0;
+  tc.b=0;
 
   
 
@@ -107,6 +112,13 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
     subtractPoint(vp,p,V);
     spc += m->spc * l->spc * pow(clamp(cosAngBetween(R,V),0.0,1.0),8) * shade * light_atten;
 
+	freePoint(ld);
+	freePoint(L);
+	freePoint(D);
+	freePoint(N);
+	freePoint(tmp);
+	freePoint(R);
+	freePoint(V);
   }
 
   //Reflection stuff
@@ -118,9 +130,8 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
 
   //Refraction stuff
   ray refract;
-  GLfloat ktg = 1; //m->ktg;
-  GLfloat refAng = 1.5;
-  calculateRefraction(r,n,p,refAng,&refract);
+  GLfloat ktg = m->ktg;
+  calculateRefraction(r,n,p,m->refN,&refract);
   traceRay(&refract,&tc,d+1,p->shape);
   // 
   
@@ -128,7 +139,7 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   vector* tmp = makePoint(0,0,0);
   subtractPoint(p,r->start,tmp);
   attenuation=clamp(1/(1+0.5*length(tmp)+0.5*lengthSq(tmp)),0,1);
-
+  freePoint(tmp);
   
   
   c->r = (amb+dif+spc) * m->r;
