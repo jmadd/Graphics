@@ -58,6 +58,7 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   GLfloat dif=0;
   GLfloat spc=0;
   color rc;
+  color tc;
   c->r=0;
   c->g=0;
   c->b=0;
@@ -65,22 +66,24 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   rc.g=0;
   rc.b=0;
 
-  ray reflect;
-  calculateReflection(r,n,p,&reflect);
   
-  
-  traceRay(&reflect,&rc,d+1,p->shape);
-
-  GLfloat krg = m->krg;
-  GLfloat attenuation;
-  vector* tmp = makePoint(0,0,0);
-  subtractPoint(reflect.start,r->start,tmp);
-  attenuation=clamp(1/(0.5+0.5*length(tmp)+0.25*lengthSq(tmp)),0,1);
 
   for(int i = 0; i < numLights; i++){
     light* l = ls[i];
+
+    //shadow check
+    bool shaded = checkShadow(p,l,p->shape);
+    
+    GLfloat shade = 1.0;
+    if(shaded) shade = 0.0;
+
     //calculate ambient light
     amb += m->amb * l->amb;
+
+    GLfloat light_atten;
+    vector* ld = makePoint(0,0,0);
+    subtractPoint(l->origin,p,ld);
+    light_atten=clamp(1/(0.25+0.15*length(ld)+0.15*lengthSq(ld)),0,1);
 
     //calculate diffuse light
     vector* L = makePoint(0,0,0);
@@ -88,7 +91,7 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
 	  normalize(L);
 	  GLfloat cosAng = dot(n,L);
 
-    dif += m->dif * l->dif * clamp(cosAng, 0, 1);
+    dif += m->dif * l->dif * clamp(cosAng, 0, 1) * shade * light_atten;
 	
 
     //calculate specular light
@@ -102,12 +105,29 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
     subtractPoint(D,tmp,R);
     vector* V = makePoint(0,0,0);
     subtractPoint(vp,p,V);
-    spc += m->spc * l->spc * pow(clamp(cosAngBetween(R,V),0.0,1.0),8);
+    spc += m->spc * l->spc * pow(clamp(cosAngBetween(R,V),0.0,1.0),8) * shade * light_atten;
+
   }
 
+  //Reflection stuff
+  ray reflect;
+  GLfloat krg = m->krg;
+  calculateReflection(r,n,p,&reflect);
+  traceRay(&reflect,&rc,d+1,p->shape);
+  // 
+
+  //Refraction stuff
+  ray refract;
+  GLfloat ktg = 1; //m->ktg;
+  GLfloat refAng = 1.5;
+  calculateRefraction(r,n,p,refAng,&refract);
+  traceRay(&refract,&tc,d+1,p->shape);
+  // 
   
-  /* so far, just finds ambient component of color */
-  
+  GLfloat attenuation;
+  vector* tmp = makePoint(0,0,0);
+  subtractPoint(p,r->start,tmp);
+  attenuation=clamp(1/(1+0.5*length(tmp)+0.5*lengthSq(tmp)),0,1);
 
   
   
@@ -118,6 +138,10 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   c->r += attenuation*krg*rc.r;
   c->g += attenuation*krg*rc.g;
   c->b += attenuation*krg*rc.b;
+
+  c->r += attenuation*ktg*tc.r;
+  c->g += attenuation*ktg*tc.g;
+  c->b += attenuation*ktg*tc.b;
   
   /* clamp color values to 1.0 */
   if (c->r > 1.0) c->r = 1.0;
@@ -125,4 +149,6 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   if (c->b > 1.0) c->b = 1.0;
 
 }
+
+
 

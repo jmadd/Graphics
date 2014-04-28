@@ -88,6 +88,7 @@ typedef struct plane {
 /* functions in raytrace.cpp */
 void traceRay(ray*, color*,  int,void*);
 void calculateReflection(ray*,vector*,point*,ray*);
+void calculateRefraction(ray*,vector*,point*,GLfloat,ray*);
 
 /* functions in geometry.cpp */
 sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
@@ -104,6 +105,7 @@ void findTriangleNormal(triangle*,vector*);
 int rayPlaneIntersect(ray*,plane*,double*);
 int raySphereIntersect(ray*,sphere*,double*);
 void findSphereNormal(sphere*,point*,vector*);
+void addPoint(point*,point*,vector*);
 void subtractPoint(point*,point*,vector*);
 void scaleVec(vector*,GLfloat,vector*);
 GLfloat cosAngBetween(vector*,vector*);
@@ -112,11 +114,15 @@ GLfloat length(vector*);
 GLfloat lengthSq(vector*);
 void normalize(vector*);
 GLfloat clamp(GLfloat,GLfloat,GLfloat);
+bool checkShadow(point*,light*,void*);
+bool checkHit(ray*,void**);
+
 
 /* functions in light.cpp */
 material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat,GLfloat);
 light* makeLight(point*,GLfloat,GLfloat,GLfloat,GLfloat, GLfloat, GLfloat);
 void shade(point*,vector*,material*,ray*,vector*,color*,light**, int, point*,int,void*);
+
 
 /* global variables */
 extern int width;

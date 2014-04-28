@@ -19,6 +19,13 @@ GLfloat clamp(GLfloat v, GLfloat l, GLfloat h){
   return (v < l) ? l : ((v > h) ? h : v);
 }
 
+void addPoint(point* a, point* b, vector* r){
+  r->x = a->x+b->x;
+  r->y = a->y+b->y;
+  r->z = a->z+b->z;
+  r->w = a->w+b->w;
+}
+
 void subtractPoint(point* a, point* b, vector* r){
   r->x = a->x-b->x;
   r->y = a->y-b->y;

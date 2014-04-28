@@ -42,7 +42,7 @@ int numTriangles = 0;
 plane** planes;
 int numPlanes = 0;
 
-int max_depth = 4;
+int max_depth = 5;
 
 
 
@@ -94,23 +94,23 @@ void display() {
 void initScene () {
   spheres = new sphere*[MAX_SPHERE];
   spheres[0] = makeSphere(-.5,0.0,-3.0,0.25);
-  spheres[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9,0.5);
+  spheres[0]->m = makeMaterial(1.0,0.1,0.15,0.5, 0.9, 0.9,0.1);
   numSpheres++;
   spheres[1] = makeSphere(.5,0.0,-2.0,0.25);
-  spheres[1]->m = makeMaterial(0.1,1.0,0.15,0.5, 0.9, 0.9,1.0);
+  spheres[1]->m = makeMaterial(.25,0.25,0.25,0.5, 0.9, 0.9,0.1);
   numSpheres++;
-  spheres[2] = makeSphere(0.0,0.0,-6.0,0.25);
-  spheres[2]->m = makeMaterial(0.15,0.0,1.0,0.5, 0.9, 0.9,0.5);
+  spheres[2] = makeSphere(-0.5,0.0,-5.0,0.25);
+  spheres[2]->m = makeMaterial(0.15,0.0,1.0,0.5, 0.9, 0.9,0.1);
   numSpheres++;
 
   triangles = new triangle*[MAX_TRIANGLE];
   triangles[0] = makeTriangle(makePoint(-0.25,0.2,-3.0),makePoint(0,0.2,-3.0),makePoint(-0.25,0.3,-2.0));
-  triangles[0]->m = makeMaterial(1.0,0.35,0.20,0.5, 1.0, 1.0,0.4);
+  triangles[0]->m = makeMaterial(1.0,0.35,0.20,0.5, 1.0, 1.0,0.1);
   numTriangles++; 
 
   planes = new plane*[MAX_PLANE];
-  planes[0] = makePlane(makePoint(0, 0, -6.5), makePoint(0, 0, 1));
-  planes[0]->m = makeMaterial(0.8,0.8,0.8,0.15, .35, .4,1.0);
+  planes[0] = makePlane(makePoint(0,0,-6.5), makePoint(0,0,1));
+  planes[0]->m = makeMaterial(1.0,1.0,1.0,0.05, .35, .4,0.1);
   numPlanes++;
 }
 
@@ -129,7 +129,7 @@ void drawScene () {
   ray r;
   color c;
   light** ls = new light*[2];
-  ls[0] = makeLight(makePoint(0.0,0.5,-1.5),1.0,1.0,1.0,0.5, 0.5, 0.5);
+  ls[0] = makeLight(makePoint(-4.0,0.0,-6.0),1.0,1.0,1.0,0.5, 0.5, 0.5);
   ls[1] = makeLight(makePoint(0.5,2.0,-1.0),1.0,1.0,1.0,0.5, 0.5, 0.5);
 
   /* initialize */
@@ -209,6 +209,66 @@ void calculateReflection(ray* r, vector* n, point* p, ray* reflect){
   subtractPoint(r->dir,tmp,dir);
 
   reflect->dir=dir;
+}
+
+void calculateRefraction(ray* r, vector* n, point* p, GLfloat refAng, ray* refract) {
+  refract->ls = r->ls;
+  refract->start = makePoint(0,0,0);
+  scaleVec(p,1,refract->start);
+  vector* dir = makePoint(0,0,0);
+  vector* tmp = makePoint(0,0,0);
+  GLfloat c1 = - dot(n, r->dir);
+  GLfloat N = 1 / refAng;
+  GLfloat c2 = sqrt(1 - N*N * (1 - c1*c1));
+  scaleVec(r->dir,N,tmp);
+  scaleVec(n,N*c1-c2,dir);
+  addPoint(tmp,dir,refract->dir);
+}
+
+bool checkShadow(point* p, light* l, void* last){
+  ray* r = (ray*) malloc(sizeof(ray));
+  r->start = p;
+  r->dir = makePoint(0,0,0);
+  subtractPoint(l->origin,p,r->dir);
+
+  return checkHit(r,&last);
+}
+
+bool checkHit(ray* r, void** last){
+  int hit = FALSE;
+  double t = 0;
+  int i = 0;
+  
+  
+  while(i < numSpheres){
+    hit = raySphereIntersect(r,spheres[i],&t);
+    //printf("%d   %d\n", *last, spheres+1);
+
+    if (hit && ((spheres+i)!=*last)){
+      return TRUE;
+    }
+    i++;
+  }
+
+  i=0;
+  while(i < numTriangles){
+    hit = rayTriangleIntersect(r,triangles[i],&t);
+    if (hit && ((triangles+i)!=*last)) {
+      return TRUE;
+    }
+    i++;
+  }
+
+
+  i=0;
+  while(i < numPlanes){
+    hit = rayPlaneIntersect(r,planes[i],&t);
+    if (hit && ((planes+i)!=*last)) {
+      return TRUE;
+    }
+    i++;
+  }  
+  return FALSE;
 }
 
 /* firstHit */
