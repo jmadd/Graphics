@@ -80,7 +80,7 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
     bool shaded = checkShadow(p,l,p->shape);
     
     GLfloat shade = 1.0;
-    if(shaded) shade = 0.0;
+    if(shaded) shade = m->ktg;
 
     //calculate ambient light
     amb += m->amb * l->amb;

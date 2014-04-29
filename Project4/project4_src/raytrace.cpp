@@ -43,7 +43,7 @@ plane** planes;
 int numPlanes = 0;
 
 int max_depth = 2;
-
+bool antialias = TRUE;
 
 
 /* the viewing parameters: */
@@ -93,25 +93,25 @@ void display() {
 
 void initScene () {
   spheres = new sphere*[MAX_SPHERE];
-  spheres[0] = makeSphere(-.25,0.0,-1.5,0.15);
-  spheres[0]->m = makeMaterial(0.2,0.2,0.85,0.5, 0.6, 0.7,0.0,1.0,1.3);
+  spheres[0] = makeSphere(0.05,0.00,-1.0,0.05);
+  spheres[0]->m = makeMaterial(0.5,0.2,0.85,0.5, 0.6, 0.7,0.1,0.2,1.2);
   numSpheres++;
-  spheres[1] = makeSphere(.50,0.0,-2.0,0.25);
+  spheres[1] = makeSphere(.250,0.0,-1.5,0.15);
   spheres[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,0.7,0,1.3);
   numSpheres++;
-  spheres[2] = makeSphere(0,0.0,-2.0,0.15);
-  spheres[2]->m = makeMaterial(0.15,0.0,1.0,0.5, 0.9, 0.9,0.0,0,1.0);
+  spheres[2] = makeSphere(-0.25,0.0,-1.2,0.15);
+  spheres[2]->m = makeMaterial(0.15,0.0,0.3,0.5, 0.9, 0.9,0.1,0,1.0);
   numSpheres++;
 
   triangles = new triangle*[MAX_TRIANGLE];
-  triangles[0] = makeTriangle(makePoint(-0.15,0.2,-1.5),makePoint(0,0.2,-2.0),makePoint(-0.1,0.3,-1.0));
+  triangles[0] = makeTriangle(makePoint(-0.25,0.5,-1.5),makePoint(0.1,0.0,-1.5),makePoint(-0.2,-0.2,-1.3));
   triangles[0]->m = makeMaterial(1.0,0.35,0.20,0.5, 1.0, 1.0,1.0,0,1.0);
   numTriangles++; 
 
   planes = new plane*[MAX_PLANE];
   planes[0] = makePlane(makePoint(0,0,-2), makePoint(0,0,1));
   planes[0]->m = makeMaterial(1.0,1.0,1.0,0.25, .35, .3,1.0,0,1.0);
-  numPlanes++;
+  //numPlanes++;
 }
 
 void initCamera (int w, int h) {
@@ -128,6 +128,11 @@ void drawScene () {
   point direction; 
   ray r;
   color c;
+  point wp1,wp2,wp3,wp4;  
+		  point dir1,dir2,dir3,dir4; 
+		  ray r1,r2,r3,r4;
+	      color c1,c2,c3,c4;
+
   light** ls = new light*[2];
   ls[0] = makeLight(makePoint(0.0,0.0,0),1.0,1.0,1.0,0.4, 0.7, 0.6);
   ls[1] = makeLight(makePoint(0.5,1.0,-1.0),1.0,1.0,1.0,0.4, 0.7, 0.6);
@@ -139,6 +144,9 @@ void drawScene () {
   r.start = &worldPix;
   r.dir= &direction;
   r.ls = ls;
+  c.r=0;
+  c.g=0;
+  c.b=0;
 
   imageWidth = 2*pnear*tan(fovx/2);
 
@@ -155,18 +163,66 @@ void drawScene () {
       worldPix.y = (j-(height/2))*imageWidth/width;
       /* x position = (pixel width/middle) scaled to world coords */ 
       worldPix.x = (i-(width/2))*imageWidth/width;
-
+	  
       /* find direction */
       /* note: direction vector is NOT NORMALIZED */
       calculateDirection(viewpoint,&worldPix,&direction);
 
-      /* trace the ray! */
-      c.r=0;
-      c.g=0;
-      c.b=0;
-      traceRay(&r,&c,0,NULL);
-      /* write the pixel! */
-      drawPixel(i,j,c.r,c.g,c.b);
+	  if(antialias){
+		  
+
+		  r1.start=&wp1;
+		  r2.start=&wp2;
+		  r3.start=&wp3;
+		  r4.start=&wp4;
+		  r1.dir=&dir1;
+		  r2.dir=&dir2;
+		  r3.dir=&dir3;
+		  r4.dir=&dir4;
+		  r1.ls = ls;
+		  r2.ls = ls;
+		  r3.ls = ls;
+		  r4.ls = ls;
+
+		  wp1.w=1.0;
+		  wp1.z=-pnear;
+		  wp2.w=1.0;
+		  wp2.z=-pnear;
+		  wp3.w=1.0;
+		  wp3.z=-pnear;
+		  wp4.w=1.0;
+		  wp4.z=-pnear;
+
+		  wp1.y=(j-(height/2))*imageWidth/width;
+		  wp1.x=(i-(width/2))*imageWidth/width;
+		  wp2.y=(j-(height/2)+0.5)*imageWidth/width;
+		  wp2.x=(i-(width/2))*imageWidth/width;
+		  wp3.y=(j-(height/2))*imageWidth/width;
+		  wp3.x=(i-(width/2)+0.5)*imageWidth/width;
+		  wp4.y=(j-(height/2)+0.5)*imageWidth/width;
+		  wp4.x=(i-(width/2)+0.5)*imageWidth/width;
+
+		  calculateDirection(viewpoint,&wp1,&dir1);
+		  calculateDirection(viewpoint,&wp2,&dir2);
+		  calculateDirection(viewpoint,&wp3,&dir3);
+		  calculateDirection(viewpoint,&wp4,&dir4);
+
+		  traceRay(&r1,&c1,0,NULL);
+		  traceRay(&r2,&c2,0,NULL);
+		  traceRay(&r3,&c3,0,NULL);
+		  traceRay(&r4,&c4,0,NULL);
+
+		  c.r=(c1.r+c2.r+c3.r+c4.r)/4;
+		  c.g=(c1.g+c2.g+c3.g+c4.g)/4;
+		  c.b=(c1.b+c2.b+c3.b+c4.b)/4;
+
+		  drawPixel(i,j,c.r,c.g,c.b);
+	  } else{
+		/* trace the ray! */
+		traceRay(&r,&c,0,NULL);
+		/* write the pixel! */
+		drawPixel(i,j,c.r,c.g,c.b);
+	  }
     }
   }
 }
@@ -225,6 +281,10 @@ void calculateRefraction(ray* r, vector* n, point* p, GLfloat refAng, ray* refra
   scaleVec(r->dir,N,tmp);
   scaleVec(n,N*c1-c2,dir);
   addPoint(tmp,dir,refract->dir);
+  snellIntersect(refract,p,&(p->shape),tmp);
+  scaleVec(tmp,1,refract->start);
+  scaleVec(r->dir,1,refract->dir);
+
   freePoint(dir);
   freePoint(tmp);
 }
@@ -273,6 +333,52 @@ bool checkHit(ray* r, void** last){
     i++;
   }  
   return FALSE;
+}
+
+void snellIntersect(ray* r, point* p, void** last, point* result){
+  int hit = FALSE;
+  double t = 0;
+  int i = 0;
+  ray in;
+  in.start=p;
+  in.dir=r->dir;
+  in.ls=r->ls;
+  
+  while(i < numSpheres){
+    
+
+    if (((spheres+i)==*last)){
+      //intersect
+	  raySphereIntersectLast(&in,spheres[i],&t);
+	  findPointOnRay(&in,t,result);
+	  return;
+    }
+    i++;
+  }
+
+  i=0;
+  while(i < numTriangles){
+    
+    if (((triangles+i)==*last)) {
+	  rayTriangleIntersect(&in,triangles[i],&t);
+	  findPointOnRay(&in,t,result);
+      return;
+    }
+    i++;
+  }
+
+
+  i=0;
+  while(i < numPlanes){
+    
+    if (((planes+i)==*last)) {
+	  rayPlaneIntersect(&in,planes[i],&t);
+	  findPointOnRay(&in,t,result);
+      return;
+    }
+    i++;
+  }  
+  
 }
 
 /* firstHit */

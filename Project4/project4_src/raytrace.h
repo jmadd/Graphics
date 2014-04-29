@@ -106,6 +106,7 @@ int rayTriangleIntersect(ray*,triangle*,double*);
 void findTriangleNormal(triangle*,vector*);
 int rayPlaneIntersect(ray*,plane*,double*);
 int raySphereIntersect(ray*,sphere*,double*);
+int raySphereIntersectLast(ray*,sphere*,double*);
 void findSphereNormal(sphere*,point*,vector*);
 void addPoint(point*,point*,vector*);
 void subtractPoint(point*,point*,vector*);
@@ -118,6 +119,7 @@ void normalize(vector*);
 GLfloat clamp(GLfloat,GLfloat,GLfloat);
 bool checkShadow(point*,light*,void*);
 bool checkHit(ray*,void**);
+void snellIntersect(ray*,point*,void**,point*);
 
 
 /* functions in light.cpp */
