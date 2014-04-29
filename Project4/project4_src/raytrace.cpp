@@ -93,39 +93,24 @@ void display() {
 
 void initScene () {
   spheres = new sphere*[MAX_SPHERE];
-  spheres[0] = makeSphere(-.25,0.0,-3.0,0.25);
-  spheres[0]->m = makeMaterial(0.8,0.8,0.85,0.5, 0.6, 0.7,0.1,1.0,1.3);
+  spheres[0] = makeSphere(-.25,0.0,-1.5,0.15);
+  spheres[0]->m = makeMaterial(0.2,0.2,0.85,0.5, 0.6, 0.7,0.0,1.0,1.3);
   numSpheres++;
-  spheres[1] = makeSphere(.5,0.0,-4.0,0.25);
-  spheres[1]->m = makeMaterial(1,1.0,1.0,0.5, 0.9, 0.9,1.0,0,1.3);
+  spheres[1] = makeSphere(.50,0.0,-2.0,0.25);
+  spheres[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,0.7,0,1.3);
   numSpheres++;
-  spheres[2] = makeSphere(-0.25,0.0,-5.0,0.25);
-  spheres[2]->m = makeMaterial(0.15,0.0,1.0,0.5, 0.9, 0.9,0.1,0,1.0);
+  spheres[2] = makeSphere(0,0.0,-2.0,0.15);
+  spheres[2]->m = makeMaterial(0.15,0.0,1.0,0.5, 0.9, 0.9,0.0,0,1.0);
   numSpheres++;
 
   triangles = new triangle*[MAX_TRIANGLE];
-  triangles[0] = makeTriangle(makePoint(-0.25,0.2,-3.0),makePoint(0,0.2,-3.0),makePoint(-0.25,0.3,-2.0));
+  triangles[0] = makeTriangle(makePoint(-0.15,0.2,-1.5),makePoint(0,0.2,-2.0),makePoint(-0.1,0.3,-1.0));
   triangles[0]->m = makeMaterial(1.0,0.35,0.20,0.5, 1.0, 1.0,1.0,0,1.0);
   numTriangles++; 
 
   planes = new plane*[MAX_PLANE];
-  planes[0] = makePlane(makePoint(0,0,-5), makePoint(0,0,1));
-  planes[0]->m = makeMaterial(1.0,1.0,1.0,0.25, .35, .4,1.0,0,1.0);
-  numPlanes++;
-  planes[1] = makePlane(makePoint(-2,0,0), makePoint(1,0,0));
-  planes[1]->m = makeMaterial(1.0,1.0,0,0.25, .35, .4,0,0,1.0);
-  numPlanes++;
-  planes[2] = makePlane(makePoint(2,0,0), makePoint(-1,0,0));
-  planes[2]->m = makeMaterial(1.0,0,1.0,0.25, .35, .4,0,0,1.0);
-  numPlanes++;
-  planes[3] = makePlane(makePoint(0,2,0), makePoint(0,-1,0));
-  planes[3]->m = makeMaterial(0,1.0,1.0,0.25, .35, .4,0,0,1.0);
-  numPlanes++;
-  planes[4] = makePlane(makePoint(0,-2,0), makePoint(0,1,0));
-  planes[4]->m = makeMaterial(1.0,0,1.0,0.25, .35, .4,0,0,1.0);
-  numPlanes++;
-  planes[5] = makePlane(makePoint(0,0,1), makePoint(0,0,-1));
-  planes[5]->m = makeMaterial(0,0,1.0,0.25, .35, .4,0,0,1.0);
+  planes[0] = makePlane(makePoint(0,0,-2), makePoint(0,0,1));
+  planes[0]->m = makeMaterial(1.0,1.0,1.0,0.25, .35, .3,1.0,0,1.0);
   numPlanes++;
 }
 
@@ -144,8 +129,8 @@ void drawScene () {
   ray r;
   color c;
   light** ls = new light*[2];
-  ls[0] = makeLight(makePoint(.0,0.0,0),1.0,1.0,1.0,0.5, 0.5, 0.5);
-  ls[1] = makeLight(makePoint(0.5,1.0,-1.0),1.0,1.0,1.0,0.5, 0.5, 0.5);
+  ls[0] = makeLight(makePoint(0.0,0.0,0),1.0,1.0,1.0,0.4, 0.7, 0.6);
+  ls[1] = makeLight(makePoint(0.5,1.0,-1.0),1.0,1.0,1.0,0.4, 0.7, 0.6);
 
   /* initialize */
   worldPix.w = 1.0;
@@ -218,12 +203,12 @@ void calculateReflection(ray* r, vector* n, point* p, ray* reflect){
   reflect->ls = r->ls;
   reflect->start = makePoint(0,0,0);
   scaleVec(p,1,reflect->start);
-  vector* dir = makePoint(0,0,0);
+  reflect->dir = makePoint(0,0,0);
   vector* tmp = makePoint(0,0,0);
+  normalize(n);
   scaleVec(n,2*dot(r->dir,n),tmp);
-  subtractPoint(r->dir,tmp,dir);
+  subtractPoint(r->dir,tmp,reflect->dir);
 
-  reflect->dir=dir;
   freePoint(tmp);
 }
 

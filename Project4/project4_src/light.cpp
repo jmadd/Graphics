@@ -88,7 +88,7 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
     GLfloat light_atten;
     vector* ld = makePoint(0,0,0);
     subtractPoint(l->origin,p,ld);
-    light_atten=clamp(1/(0.25+0.15*length(ld)+0.15*lengthSq(ld)),0,1);
+    light_atten=clamp(1/(0+0.05*length(ld)+0.05*lengthSq(ld)),0,1);
 
     //calculate diffuse light
     vector* L = makePoint(0,0,0);
