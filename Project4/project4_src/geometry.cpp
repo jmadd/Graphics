@@ -136,61 +136,43 @@ triangle* makeTriangle(point* a, point* b, point* c){
 
 int rayTriangleIntersect(ray* r, triangle* tri, double* t){
   
-  vector* n = makePoint(0,0,0);
+  vector n;
   GLfloat d;
   GLfloat tmp;
-  findTriangleNormal(tri,n);
-  d=dot(n,tri->a);
-  tmp=(d-dot(n,r->start))/dot(n,r->dir);
-  point* q = makePoint(0,0,0);
-  findPointOnRay(r,tmp,q);
+  findTriangleNormal(tri,&n);
+  d=dot(&n,tri->a);
+  tmp=(d-dot(&n,r->start))/dot(&n,r->dir);
+  point q;
+  findPointOnRay(r,tmp,&q);
 
-  vector* v1 = makePoint(0,0,0);
-  vector* v2 = makePoint(0,0,0);
-  vector* cross = makePoint(0,0,0);
-  subtractPoint(tri->b,tri->a,v1);
-  subtractPoint(q,tri->a,v2);
-  crossProduct(v1,v2,cross);
+  vector v1;
+  vector v2;
+  vector cross;
+  subtractPoint(tri->b,tri->a,&v1);
+  subtractPoint(&q,tri->a,&v2);
+  crossProduct(&v1,&v2,&cross);
   
-  if(dot(cross,n)<0){
-	freePoint(cross);
-	freePoint(q);
-	freePoint(n);
-	freePoint(v1);
-  freePoint(v2);
+  if(dot(&cross,&n)<0){
     return false;
   }
 
-  subtractPoint(tri->c,tri->b,v1);
-  subtractPoint(q,tri->b,v2);
-  crossProduct(v1,v2,cross);
-  if(dot(cross,n)<0){
-	freePoint(cross);
-	freePoint(q);
-	freePoint(n);
-	freePoint(v1);
-  freePoint(v2);
+  subtractPoint(tri->c,tri->b,&v1);
+  subtractPoint(&q,tri->b,&v2);
+  crossProduct(&v1,&v2,&cross);
+  
+  if(dot(&cross,&n)<0){
     return false;
   }
 
-  subtractPoint(tri->a,tri->c,v1);
-  subtractPoint(q,tri->c,v2);
-  crossProduct(v1,v2,cross);
-  if(dot(cross,n)<0){
-	freePoint(cross);
-	freePoint(q);
-	freePoint(n);
-	freePoint(v1);
-  freePoint(v2);
+  subtractPoint(tri->a,tri->c,&v1);
+  subtractPoint(&q,tri->c,&v2);
+  crossProduct(&v1,&v2,&cross);
+  
+  if(dot(&cross,&n)<0){
     return false;
   }
 
   *t = tmp;
-  freePoint(cross);
-  freePoint(q);
-  freePoint(n);
-  freePoint(v1);
-  freePoint(v2);
   if(tmp < 0)return false;
   return true;
   
@@ -198,14 +180,12 @@ int rayTriangleIntersect(ray* r, triangle* tri, double* t){
 }
 
 void findTriangleNormal(triangle* tri, vector* n){
-  vector* v1 = makePoint(0,0,0);
-  vector* v2 = makePoint(0,0,0);
-  subtractPoint(tri->b,tri->a,v1);
-  subtractPoint(tri->c,tri->a,v2);
-  crossProduct(v1,v2,n);
-  scaleVec(n,1/length(n),n);
-  freePoint(v1);
-  freePoint(v2);
+  vector v1;
+  vector v2;
+  subtractPoint(tri->b,tri->a,&v1);
+  subtractPoint(tri->c,tri->a,&v2);
+  crossProduct(&v1,&v2,n);
+  normalize(n);
 }
 
 /* PLANES */

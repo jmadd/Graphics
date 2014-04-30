@@ -42,7 +42,7 @@ int numTriangles = 0;
 plane** planes;
 int numPlanes = 0;
 
-int max_depth = 2;
+int max_depth = 3;
 bool antialias = TRUE;
 
 
@@ -94,18 +94,18 @@ void display() {
 void initScene () {
   spheres = new sphere*[MAX_SPHERE];
   spheres[0] = makeSphere(0.05,0.00,-1.0,0.05);
-  spheres[0]->m = makeMaterial(0.5,0.2,0.85,0.5, 0.6, 0.7,0.1,0.2,1.2);
+  spheres[0]->m = makeMaterial(0.5,0.5,0.5,0.5, 0.6, 0.7,0.8,0.2,1.2);
   numSpheres++;
   spheres[1] = makeSphere(.250,0.0,-1.5,0.15);
-  spheres[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,0.7,0,1.3);
+  spheres[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.3);
   numSpheres++;
   spheres[2] = makeSphere(-0.25,0.0,-1.2,0.15);
   spheres[2]->m = makeMaterial(0.15,0.0,0.3,0.5, 0.9, 0.9,0.1,0,1.0);
   numSpheres++;
 
   triangles = new triangle*[MAX_TRIANGLE];
-  triangles[0] = makeTriangle(makePoint(-0.25,0.5,-1.5),makePoint(0.1,0.0,-1.5),makePoint(-0.2,-0.2,-1.3));
-  triangles[0]->m = makeMaterial(1.0,0.35,0.20,0.5, 1.0, 1.0,1.0,0,1.0);
+  triangles[0] = makeTriangle(makePoint(-0.25,0.5,-1.5),makePoint(0.1,0.0,-1.5),makePoint(-0.2,-0.4,-1.3));
+  triangles[0]->m = makeMaterial(0.4,0.4,0.4,0.5, 0.9, 0.8,1.0,0,1.0);
   numTriangles++; 
 
   planes = new plane*[MAX_PLANE];
@@ -260,12 +260,10 @@ void calculateReflection(ray* r, vector* n, point* p, ray* reflect){
   reflect->start = makePoint(0,0,0);
   scaleVec(p,1,reflect->start);
   reflect->dir = makePoint(0,0,0);
-  vector* tmp = makePoint(0,0,0);
-  normalize(n);
-  scaleVec(n,2*dot(r->dir,n),tmp);
-  subtractPoint(r->dir,tmp,reflect->dir);
+  vector tmp;
+  scaleVec(n,2*dot(r->dir,n),&tmp);
+  subtractPoint(r->dir,&tmp,reflect->dir);
 
-  freePoint(tmp);
 }
 
 void calculateRefraction(ray* r, vector* n, point* p, GLfloat refAng, ray* refract) {
@@ -273,20 +271,18 @@ void calculateRefraction(ray* r, vector* n, point* p, GLfloat refAng, ray* refra
   refract->start = makePoint(0,0,0);
   refract->dir = makePoint(0,0,0);
   scaleVec(p,1,refract->start);
-  vector* dir = makePoint(0,0,0);
-  vector* tmp = makePoint(0,0,0);
+  vector dir;
+  vector tmp;
   GLfloat c1 = - dot(n, r->dir);
   GLfloat N = 1 / refAng;
   GLfloat c2 = sqrt(1 - N*N * (1 - c1*c1));
-  scaleVec(r->dir,N,tmp);
-  scaleVec(n,N*c1-c2,dir);
-  addPoint(tmp,dir,refract->dir);
-  snellIntersect(refract,p,&(p->shape),tmp);
-  scaleVec(tmp,1,refract->start);
+  scaleVec(r->dir,N,&tmp);
+  scaleVec(n,N*c1-c2,&dir);
+  addPoint(&tmp,&dir,refract->dir);
+  snellIntersect(refract,p,&(p->shape),&tmp);
+  scaleVec(&tmp,1,refract->start);
   scaleVec(r->dir,1,refract->dir);
 
-  freePoint(dir);
-  freePoint(tmp);
 }
 
 bool checkShadow(point* p, light* l, void* last){
@@ -393,15 +389,17 @@ void firstHit(ray* r, point* p, vector* n, material* *m,void**last) {
   
   
   while(i < numSpheres){
+	if((spheres+i)==*last){
+		i++;
+		continue;
+	}
     hit = raySphereIntersect(r,spheres[i],&t);
-    //printf("%d   %d\n", *last, spheres+1);
 
-    if (hit && ((spheres+i)!=*last)) {
+    if (hit) {
   	  if(t <= T){
     		T=t;
     		*m = spheres[i]->m;
-        p->shape = spheres + i;
-        //*last = spheres+i;
+			p->shape = spheres + i;
     		findPointOnRay(r,T,p);
     		findSphereNormal(spheres[i],p,n);
   	  }
@@ -415,18 +413,21 @@ void firstHit(ray* r, point* p, vector* n, material* *m,void**last) {
 
   i=0;
   while(i < numTriangles){
+	if(((triangles+i)==*last)){
+		i++;
+		continue;
+	}
     hit = rayTriangleIntersect(r,triangles[i],&t);
-    if (hit && ((triangles+i)!=*last)) {
+    if (hit) {
   	  if(t <= T){
     		T=t;
     		*m = triangles[i]->m;
-        p->shape = triangles + i;
+			p->shape = triangles + i;
     		findPointOnRay(r,T,p);
     		findTriangleNormal(triangles[i],n);
     		if(dot(n,r->dir) > 0){
     			scaleVec(n,-1,n);   //fixed lighting for triangle
     		}
-    		//printVector(p);
   	  }
     } else if(t == 1.0e8){
         /* indicates no hit */
@@ -439,25 +440,29 @@ void firstHit(ray* r, point* p, vector* n, material* *m,void**last) {
 
   i=0;
   while(i < numPlanes){
+	if(((planes+i)!=*last)){
+		i++;
+		continue;
+	}
     hit = rayPlaneIntersect(r,planes[i],&t);
-    if (hit && ((planes+i)!=*last)) {
-    if(t <= T){
-    T=t;
-    *m = planes[i]->m;
-    p->shape = planes + i;
-    findPointOnRay(r,T,p);
-    scaleVec(planes[i]->normal, 1, n);  //store normal values in n
-    if(dot(n,r->dir) > 0){
-      scaleVec(n,-1,n);   //fixed lighting for triangle
-    }
-    //printVector(p);
-    }
+    if (hit) {
+		if(t <= T){
+			T=t;
+			*m = planes[i]->m;
+			p->shape = planes + i;
+			findPointOnRay(r,T,p);
+			scaleVec(planes[i]->normal, 1, n);  //store normal values in n
+			if(dot(n,r->dir) > 0){
+			  scaleVec(n,-1,n);   //fixed lighting for triangle
+			}
+		
+		}
     } else if(t == 1.0e8){
       /* indicates no hit */
       p->w = 0.0;
     }
     i++;
-  hit=FALSE;
+	hit=FALSE;
   }  
 
 }

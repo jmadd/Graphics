@@ -86,39 +86,29 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
     amb += m->amb * l->amb;
 
     GLfloat light_atten;
-    vector* ld = makePoint(0,0,0);
-    subtractPoint(l->origin,p,ld);
-    light_atten=clamp(1/(0+0.05*length(ld)+0.05*lengthSq(ld)),0,1);
+    vector ld;
+    subtractPoint(l->origin,p,&ld);
+    light_atten=clamp(1/(0+0.05*lengthSq(&ld)),0,1);
 
     //calculate diffuse light
-    vector* L = makePoint(0,0,0);
-    subtractPoint(l->origin,p,L);
-	  normalize(L);
-	  GLfloat cosAng = dot(n,L);
+    vector L;
+    subtractPoint(l->origin,p,&L);
+	GLfloat cosAng = dot(n,&L);
 
     dif += m->dif * l->dif * clamp(cosAng, 0, 1) * shade * light_atten;
 	
 
     //calculate specular light
-    vector* D = makePoint(0,0,0);
-    scaleVec(L,-1.0,D);
-    vector* N = makePoint(0,0,0);
-    scaleVec(n,1/length(n),N);
-    vector* tmp = makePoint(0,0,0);
-    scaleVec(N,2*dot(D,N),tmp);
-    vector* R = makePoint(0,0,0);
-    subtractPoint(D,tmp,R);
-    vector* V = makePoint(0,0,0);
-    subtractPoint(vp,p,V);
-    spc += m->spc * l->spc * pow(clamp(cosAngBetween(R,V),0.0,1.0),8) * shade * light_atten;
+    vector D;
+    scaleVec(&L,-1.0,&D);
+    vector tmp;
+    scaleVec(n,2*dot(&D,n),&tmp);
+    vector R;
+    subtractPoint(&D,&tmp,&R);
+    vector V;
+    subtractPoint(vp,p,&V);
+    spc += m->spc * l->spc * pow(clamp(cosAngBetween(&R,&V),0.0,1.0),8) * shade * light_atten;
 
-	freePoint(ld);
-	freePoint(L);
-	freePoint(D);
-	freePoint(N);
-	freePoint(tmp);
-	freePoint(R);
-	freePoint(V);
   }
 
   //Reflection stuff
@@ -136,10 +126,10 @@ void shade(point* p, vector* n, material* m, ray* r, vector* in, color* c, light
   // 
   
   GLfloat attenuation;
-  vector* tmp = makePoint(0,0,0);
-  subtractPoint(p,r->start,tmp);
-  attenuation=clamp(1/(1+0.5*length(tmp)+0.5*lengthSq(tmp)),0,1);
-  freePoint(tmp);
+  vector tmp;
+  subtractPoint(p,r->start,&tmp);
+  attenuation=clamp(1/(1+0.5*lengthSq(&tmp)),0,1);
+  
   
   
   c->r = (amb+dif+spc) * m->r;
