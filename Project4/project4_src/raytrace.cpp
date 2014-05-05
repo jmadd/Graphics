@@ -7,6 +7,9 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+#include <iostream>
+#include <cstdio>
+#include <ctime>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +18,7 @@
 #include "common.h"
 #include "lowlevel.h"
 #include "raytrace.h"
+
 
 #define MAX_SPHERE 8
 #define MAX_TRIANGLE 8
@@ -53,7 +57,12 @@ GLfloat fovx;  /* x-angle of view frustum */
 int width = 500;     /* width of window in pixels */
 int height = 350;    /* height of window in pixels */
 
+double duration;
+
+std::clock_t start = std::clock();
+
 int main (int argc, char** argv) {
+
   int win;
 
   glutInit(&argc,argv);
@@ -65,6 +74,7 @@ int main (int argc, char** argv) {
   init(width,height);
   glutDisplayFunc(display);
   glutMainLoop();
+
   return 0;
 }
 
@@ -89,17 +99,21 @@ void display() {
   drawScene();  /* draws the picture in the canvas */
   flushCanvas();  /* draw the canvas to the OpenGL window */
   glFlush();
+  duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+  //std::cout<<"Time: "<< duration <<'\n';
 }
+
+//NOTE: POSITIVE Z IS TOWARDS THE VIEWER
 
 void initScene () {
   spheres = new sphere*[MAX_SPHERE];
-  spheres[0] = makeSphere(0.05,0.00,-1.0,0.05);
-  spheres[0]->m = makeMaterial(0.5,0.5,0.5,0.5, 0.6, 0.7,0.8,0.2,1.2);
+  spheres[0] = makeSphere(0.05,0.00,-1.0,0.1);
+  spheres[0]->m = makeMaterial(0.5,0.5,0.5,0.5, 0.6, 0.7,0.8,0.2,1.0);
   numSpheres++;
-  spheres[1] = makeSphere(.250,0.0,-1.5,0.15);
-  spheres[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.3);
+  spheres[1] = makeSphere(.250,0.0,-1.5,0.1);
+  spheres[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.0);
   numSpheres++;
-  spheres[2] = makeSphere(-0.25,0.0,-1.2,0.15);
+  spheres[2] = makeSphere(-0.25,0.0,-1.2,0.1);
   spheres[2]->m = makeMaterial(0.15,0.0,0.3,0.5, 0.9, 0.9,0.1,0,1.0);
   numSpheres++;
 
@@ -108,9 +122,23 @@ void initScene () {
   triangles[0]->m = makeMaterial(0.4,0.4,0.4,0.5, 0.9, 0.8,1.0,0,1.0);
   numTriangles++; 
 
+  //trying to make a room with walls cause I thought that would be cool. 
+
   planes = new plane*[MAX_PLANE];
-  planes[0] = makePlane(makePoint(0,0,-2), makePoint(0,0,1));
-  planes[0]->m = makeMaterial(1.0,1.0,1.0,0.25, .35, .3,1.0,0,1.0);
+  planes[0] = makePlane(makePoint(1,.25,-2), makePoint(1,1,0));
+  planes[0]->m = makeMaterial(0.4,0.4,0.4,0.5, 0.9, 0.8,1.0,0,1.0);
+  numPlanes++;
+
+  planes[1] = makePlane(makePoint(-.25,0,1), makePoint(1,0,0));
+  planes[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.0);
+  //numPlanes++;
+
+  planes[2] = makePlane(makePoint(.25,0,1), makePoint(-1,0,0));
+  planes[2]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.0);
+  //numPlanes++;
+
+  planes[3] = makePlane(makePoint(0,0,1), makePoint(0,0,-1));
+  planes[3]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.0);
   //numPlanes++;
 }
 
@@ -134,8 +162,8 @@ void drawScene () {
 	      color c1,c2,c3,c4;
 
   light** ls = new light*[2];
-  ls[0] = makeLight(makePoint(0.0,0.0,0),1.0,1.0,1.0,0.4, 0.7, 0.6);
-  ls[1] = makeLight(makePoint(0.5,1.0,-1.0),1.0,1.0,1.0,0.4, 0.7, 0.6);
+  ls[0] = makeLight(makePoint(0.0,0.0,5),1.0,1.0,1.0,0.4, 0.7, 0.6);
+  ls[1] = makeLight(makePoint(0.5,1.0,1.0),1.0,1.0,1.0,0.4, 0.7, 0.6);
 
   /* initialize */
   worldPix.w = 1.0;

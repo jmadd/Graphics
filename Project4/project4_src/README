@@ -5,8 +5,35 @@
  * for compiling, etc., if you did something besides the standard
  * Makefile.  Also, document any additional features in this file.
  *
- * Group Members:
+ * Group Members: Nick Crum, Jared Maddox
  *
  */
 
 
+---------------------ADDITIONAL FEATURES---------------------------------------------------
+
+	- We use seperate parameters for controlling the ambient, diffuse, and specular components (5 pts)
+	- We added the ability to add several light sources to the scene (5 pts)
+	- We implemented distance dependent decaying of the intensity of the light (5 pts)
+	- We implemented shadowing for multiple light sources (5 pts)
+	- We applied Snell's law of refraction (5 pts)
+	- We performed antialiasing (5 pts)
+
+This should leave us with a total of 30 bonus points.
+
+--------------------------QUESTIONS--------------------------------------------------------
+
+1.  [3 points] How will the running time of  your ray tracer change for each of the following changes (will it increase or decrease or remain roughly the same)? 
+     (a) the window size is increased 
+     	When the size of the window is quadrupled, it takes four times as long to create the scene. This is because there are four times as many pixels, therefore there are four times as many rays that must be calculated. 
+     (b) all the objects are increased in size
+     	When the shapes are four times larger, it takes about twice as long to create the scene. This is because only the rays that hit objects must recurse to form more rays. The more space the shapes take up, the more rays that will be recursed. 
+     (c) more objects are added 
+     	The scene takes slightly longer to draw for each object that is added. The same number of rays must be drawn but as stated above, the more space that is taken up by objects, the more likely rays that will recurse.
+
+
+2.  [4 points] Let a regular lattice be defined as a set of identically-sized 3-D cubes that divide up (i.e. partition) a finite amount of 3-D space.  The cubes in the lattice are nonoverlapping and the union of all cubes is the original space.  If the entire scene is divided into a regular lattice and if every object is placed in the cube or cubes that it occupies, then how can you use the lattice to speed up your ray tracer?
+		Currently, for each ray that is created, the program must check each shape to see if that ray intersects with each shape. With this lattice implementation, because the cubes are uniform in size and even in placement, we can use simple geometry to define which cubes the ray will be in. Each cube could store data about what shapes are contained in its space. This way, the ray would only need to check for intersections with shapes that are contained in the cubes that ray will be in, dramatically reducing the amount of required calculation. 
+
+3. [3 points] Consider the algorithm in raytrace.cpp that generates eye rays.  Does the current code generate an image under a perspective projection or an orthogonal projection?  Justify your answer.  How would you modify the code to enable toggling between the two projection modes?  Specifically, provide an overview of what you would change in the eye ray generation algorithm.
+		In the current implementation, all rays are given an angle based on a subtraction between the defined viewpoint and the pixel the ray will pass through. This naturally sets the view to be perspective. To create an orthogonal view, I would set the angle of all rays to start at (0,0,1) so that they would all point directly in the positive z direction. This way the scene doesn't widen as z increases so that farther away objects don't appear smaller.
