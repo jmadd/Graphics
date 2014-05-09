@@ -120,6 +120,51 @@ void findPointOnRay(ray* r,double t,point* p) {
   p->w = 1.0;
 }
 
+quad* makeQuad(point* a, vector* u, vector* v){
+  quad* q;
+  q = (quad*) malloc(sizeof(quad));
+  q->a=a;
+  q->b=makePoint(0,0,0);
+  q->c=makePoint(0,0,0);
+  q->d=makePoint(0,0,0);
+  addPoint(a,u,q->b);
+  addPoint(q->b,v,q->c);
+  addPoint(a,v,q->d);
+  q->m=NULL;
+  return q;
+}
+
+int rayQuadIntersect(ray* r, quad* q, double* t){
+  triangle* t1 = makeTriangle(q->a,q->b,q->c);
+  triangle* t2 = makeTriangle(q->a,q->c,q->d);
+  double T = 0;
+  bool hit = false;
+  hit = rayTriangleIntersect(r,t1,&T);
+  if(hit){
+    *t=T;
+    return TRUE;
+  }
+  hit = rayTriangleIntersect(r,t2,&T);
+  if(hit){
+    *t=T;
+    return TRUE;
+
+  }
+
+  return FALSE;
+}
+
+
+void findQuadNormal(quad* q, vector* n){
+  vector u;
+  subtractPoint(q->b,q->a,&u);
+  vector v;
+  subtractPoint(q->c,q->a,&v);
+  crossProduct(&u,&v,n);
+  normalize(n);
+
+}
+
 /* TRIANGLES */
 
 triangle* makeTriangle(point* a, point* b, point* c){

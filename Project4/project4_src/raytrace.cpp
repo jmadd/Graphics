@@ -24,6 +24,7 @@
 #define MAX_TRIANGLE 8
 #define MAX_LIGHT 8
 #define MAX_PLANE 8
+#define MAX_QUAD 8
 
 /* local functions */
 void initScene(void);
@@ -46,7 +47,10 @@ int numTriangles = 0;
 plane** planes;
 int numPlanes = 0;
 
-int max_depth = 3;
+quad** quads;
+int numQuads = 0;
+
+int max_depth = 4;
 bool antialias = TRUE;
 
 
@@ -107,11 +111,11 @@ void display() {
 
 void initScene () {
   spheres = new sphere*[MAX_SPHERE];
-  spheres[0] = makeSphere(0.05,0.00,-1.0,0.1);
-  spheres[0]->m = makeMaterial(0.5,0.5,0.5,0.5, 0.6, 0.7,0.8,0.2,1.0);
+  spheres[0] = makeSphere(0.05,0.00,-1.25,0.1);
+  spheres[0]->m = makeMaterial(0.5,0.5,0.5,0.5, 0.6, 0.7,0.0,0.8,1.3);
   numSpheres++;
   spheres[1] = makeSphere(.250,0.0,-1.5,0.1);
-  spheres[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.0);
+  spheres[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,0.3,0,1.0);
   numSpheres++;
   spheres[2] = makeSphere(-0.25,0.0,-1.2,0.1);
   spheres[2]->m = makeMaterial(0.15,0.0,0.3,0.5, 0.9, 0.9,0.1,0,1.0);
@@ -119,27 +123,41 @@ void initScene () {
 
   triangles = new triangle*[MAX_TRIANGLE];
   triangles[0] = makeTriangle(makePoint(-0.25,0.5,-1.5),makePoint(0.1,0.0,-1.5),makePoint(-0.2,-0.4,-1.3));
-  triangles[0]->m = makeMaterial(0.4,0.4,0.4,0.5, 0.9, 0.8,1.0,0,1.0);
+  triangles[0]->m = makeMaterial(0.4,0.4,0.4,0.5, 0.9, 0.8,0.2,1.0,1.0);
   numTriangles++; 
 
   //trying to make a room with walls cause I thought that would be cool. 
 
   planes = new plane*[MAX_PLANE];
-  planes[0] = makePlane(makePoint(1,.25,-2), makePoint(1,1,0));
-  planes[0]->m = makeMaterial(0.4,0.4,0.4,0.5, 0.9, 0.8,1.0,0,1.0);
+  planes[0] = makePlane(makePoint(0,-.25,0), makePoint(0,1,0));
+  planes[0]->m = makeMaterial(0.8,0.2,0.8,0.5, 0.9, 0.8,0.1,0,1.0);
   numPlanes++;
 
-  planes[1] = makePlane(makePoint(-.25,0,1), makePoint(1,0,0));
-  planes[1]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.0);
-  //numPlanes++;
+  planes[1] = makePlane(makePoint(-0.5,0,1), makePoint(1,0,0));
+  planes[1]->m = makeMaterial(0.5,0.7,0.9,0.5, 0.9, 0.9,0.1,0,1.0);
+  numPlanes++;
 
-  planes[2] = makePlane(makePoint(.25,0,1), makePoint(-1,0,0));
-  planes[2]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.0);
-  //numPlanes++;
+  planes[2] = makePlane(makePoint(0.5,0,1), makePoint(-1,0,0));
+  planes[2]->m = makeMaterial(0.2,0.7,0.7,0.5, 0.9, 0.9,0.1,0,1.0);
+  numPlanes++;
 
-  planes[3] = makePlane(makePoint(0,0,1), makePoint(0,0,-1));
-  planes[3]->m = makeMaterial(0.7,0.7,0.7,0.5, 0.9, 0.9,1.0,0,1.0);
-  //numPlanes++;
+  planes[3] = makePlane(makePoint(0,0,-3), makePoint(0,0,-1));
+  planes[3]->m = makeMaterial(0.7,0.2,0.2,0.5, 0.9, 0.9,0.1,0,1.0);
+  numPlanes++;
+
+  planes[4] = makePlane(makePoint(0,0,3), makePoint(0,0,1));
+  planes[4]->m = makeMaterial(0.7,0.7,0.2,0.5, 0.9, 0.9,0.1,0,1.0);
+  numPlanes++;
+
+  planes[5] = makePlane(makePoint(0,0.7,0), makePoint(0,-1,0));
+  planes[5]->m = makeMaterial(0.6,0.2,0.4,0.5, 0.9, 0.9,0.1,0,1.0);
+  numPlanes++;
+
+  quads = new quad*[MAX_QUAD];
+  quads[0] = makeQuad(makePoint(-.15,-.15,-1.0),makePoint(0,0,-0.3),makePoint(0.3,0,0));
+  quads[0]->m = makeMaterial(0.1,0.8,0.3,0.5,0.8,0.7,0.1,0.5,1.0);
+  numQuads++;
+
 }
 
 void initCamera (int w, int h) {
@@ -162,8 +180,8 @@ void drawScene () {
 	      color c1,c2,c3,c4;
 
   light** ls = new light*[2];
-  ls[0] = makeLight(makePoint(0.0,0.0,5),1.0,1.0,1.0,0.4, 0.7, 0.6);
-  ls[1] = makeLight(makePoint(0.5,1.0,1.0),1.0,1.0,1.0,0.4, 0.7, 0.6);
+  ls[0] = makeLight(makePoint(0.0,0.0,-1.0),1.0,1.0,1.0,0.4, 0.7, 0.6);
+  ls[1] = makeLight(makePoint(0.5,0.6,-1.5),1.0,1.0,1.0,0.4, 0.7, 0.6);
 
   /* initialize */
   worldPix.w = 1.0;
@@ -330,10 +348,10 @@ bool checkHit(ray* r, void** last){
   
   while(i < numSpheres){
     hit = raySphereIntersect(r,spheres[i],&t);
-    //printf("%d   %d\n", *last, spheres+1);
 
     if (hit && ((spheres+i)!=*last)){
-      return TRUE;
+      
+      if(t < 1) return TRUE;
     }
     i++;
   }
@@ -342,7 +360,16 @@ bool checkHit(ray* r, void** last){
   while(i < numTriangles){
     hit = rayTriangleIntersect(r,triangles[i],&t);
     if (hit && ((triangles+i)!=*last)) {
-      return TRUE;
+      if(t < 1)return TRUE;
+    }
+    i++;
+  }
+
+  i=0;
+  while(i < numQuads){
+    hit = rayQuadIntersect(r,quads[i],&t);
+    if (hit && ((quads+i)!=*last)) {
+      if(t < 1)return TRUE;
     }
     i++;
   }
@@ -352,7 +379,7 @@ bool checkHit(ray* r, void** last){
   while(i < numPlanes){
     hit = rayPlaneIntersect(r,planes[i],&t);
     if (hit && ((planes+i)!=*last)) {
-      return TRUE;
+      if(t < 1)return TRUE;
     }
     i++;
   }  
@@ -360,7 +387,7 @@ bool checkHit(ray* r, void** last){
 }
 
 void snellIntersect(ray* r, point* p, void** last, point* result){
-  int hit = FALSE;
+  
   double t = 0;
   int i = 0;
   ray in;
@@ -386,6 +413,17 @@ void snellIntersect(ray* r, point* p, void** last, point* result){
     if (((triangles+i)==*last)) {
 	  rayTriangleIntersect(&in,triangles[i],&t);
 	  findPointOnRay(&in,t,result);
+      return;
+    }
+    i++;
+  }
+
+  i=0;
+  while(i < numQuads){
+    
+    if (((quads+i)==*last)) {
+    rayQuadIntersect(&in,quads[i],&t);
+    findPointOnRay(&in,t,result);
       return;
     }
     i++;
@@ -465,10 +503,35 @@ void firstHit(ray* r, point* p, vector* n, material* *m,void**last) {
   	hit=FALSE;
   }
 
+  i=0;
+  while(i < numQuads){
+  if((quads+i)==*last){
+    i++;
+    continue;
+  }
+    hit = rayQuadIntersect(r,quads[i],&t);
+    if (hit) {
+      if(t <= T){
+        T=t;
+        *m = quads[i]->m;
+      p->shape = quads + i;
+        findPointOnRay(r,T,p);
+        findQuadNormal(quads[i],n);
+        if(dot(n,r->dir) > 0){
+          scaleVec(n,-1,n);   //fixed lighting for triangle
+        }
+      }
+    } else if(t == 1.0e8){
+        /* indicates no hit */
+        p->w = 0.0;
+    }
+    i++;
+    hit=FALSE;
+  }
 
   i=0;
   while(i < numPlanes){
-	if(((planes+i)!=*last)){
+	if(((planes+i)==*last)){
 		i++;
 		continue;
 	}

@@ -14,12 +14,14 @@
 
 	- We use seperate parameters for controlling the ambient, diffuse, and specular components (5 pts)
 	- We added the ability to add several light sources to the scene (5 pts)
+	- We added additional objects beyond the three required ones
 	- We implemented distance dependent decaying of the intensity of the light (5 pts)
+	- we implemeneted distance dependent decaying of the intensitt of rays (5 pts)
 	- We implemented shadowing for multiple light sources (5 pts)
 	- We applied Snell's law of refraction (5 pts)
 	- We performed antialiasing (5 pts)
 
-This should leave us with a total of 30 bonus points.
+This should leave us with a total of 35 bonus points.
 
 --------------------------QUESTIONS--------------------------------------------------------
 

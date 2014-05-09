@@ -81,6 +81,14 @@ typedef struct triangle {
   material* m;
 } triangle;
 
+typedef struct quad {
+  point* a;
+  point* b;
+  point* c;
+  point* d;
+  material* m;
+} quad;
+
 typedef struct plane {
   point* p;
   vector* normal;
@@ -95,6 +103,7 @@ void calculateRefraction(ray*,vector*,point*,GLfloat,ray*);
 /* functions in geometry.cpp */
 sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
 triangle* makeTriangle(point*,point*,point*);
+quad* makeQuad(point*,vector*,vector*);
 plane* makePlane(vector*, point*);
 point* makePoint(GLfloat, GLfloat, GLfloat);
 point* copyPoint(point *);
@@ -104,6 +113,8 @@ void calculateDirection(point*,point*,point*);
 void findPointOnRay(ray*,double,point*);
 int rayTriangleIntersect(ray*,triangle*,double*);
 void findTriangleNormal(triangle*,vector*);
+int rayQuadIntersect(ray*,quad*,double*);
+void findQuadNormal(quad*,vector*);
 int rayPlaneIntersect(ray*,plane*,double*);
 int raySphereIntersect(ray*,sphere*,double*);
 int raySphereIntersectLast(ray*,sphere*,double*);
